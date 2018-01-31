@@ -98,7 +98,7 @@ var lintStyles = function () {
             'rule-empty-line-before': 'always',
             'selector-list-comma-newline-after': 'always',
             'selector-list-comma-space-before': 'never',
-            'selector-no-universal': true,
+            'selector-max-universal': 0,
             'shorthand-property-no-redundant-values': true,
             'string-quotes': 'double',
             'value-no-vendor-prefix': true,

@@ -19,7 +19,7 @@
         return directive;
 
         /** @ngInject */
-        function PatientSearchController ($log, $scope, commonService) {
+        function PatientSearchController ($log, $scope, networkService) {
             var vm = this;
 
             vm.errorCount = errorCount;
@@ -78,7 +78,7 @@
                     vm.query.dob = vm.query.dobParts.year + vm.query.dobParts.month + vm.query.dobParts.day;
 
                     var queryObj = {query: angular.copy(vm.query)};
-                    commonService.searchForPatient(queryObj.query).then(function () {
+                    networkService.searchForPatient(queryObj.query).then(function () {
                         vm.triggerHandlers();
                         vm.query = angular.copy(vm.baseQuery);
 

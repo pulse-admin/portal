@@ -30,18 +30,18 @@
         return directive;
 
         /** @ngInject */
-        function AcfPatientListController ($log, $timeout, $uibModal, commonService, QueryQueryTimeout) {
+        function AcfPatientListController ($log, $timeout, $uibModal, QueryQueryTimeout, authService, networkService, utilService) {
             var vm = this;
 
             vm.activatePatient = activatePatient;
             vm.cacheDocument = cacheDocument;
             vm.cancelDocument = cancelDocument;
             vm.cancelDocumentQueryEndpoint = cancelDocumentQueryEndpoint;
-            vm.convertDobString = commonService.convertDobString;
+            vm.convertDobString = utilService.convertDobString;
             vm.countActive = countActive;
             vm.deactivatePatient = deactivatePatient;
             vm.dischargePatient = dischargePatient;
-            vm.displayName = commonService.displayName;
+            vm.displayName = utilService.displayName;
             vm.editPatient = editPatient;
             vm.getDocument = getDocument;
             vm.getPatientsAtAcf = getPatientsAtAcf;
@@ -61,7 +61,7 @@
                 vm.patients = [];
                 vm.isQueryingPatients = false;
                 vm.getPatientsAtAcf();
-                vm.userAcf = commonService.getUserAcf();
+                vm.userAcf = authService.getUserAcf();
             }
 
             function activatePatient (patient) {
@@ -72,7 +72,7 @@
             function cacheDocument (patient, doc) {
                 if (!doc.cached) {
                     doc.status = 'Active';
-                    commonService.cacheDocument(patient.id, doc.id).then(function () {
+                    networkService.cacheDocument(patient.id, doc.id).then(function () {
                         vm.getPatientsAtAcf();
                     });
                 }
@@ -81,7 +81,7 @@
             function cancelDocument (patient, doc) {
                 if (doc.status === 'Active') {
                     doc.isClearing = true;
-                    commonService.cancelDocument(patient.id, doc.id).then(function (response) {
+                    networkService.cancelDocument(patient.id, doc.id).then(function (response) {
                         doc = response;
                         vm.getPatientsAtAcf();
                     });
@@ -91,7 +91,7 @@
             function cancelDocumentQueryEndpoint (patient, endpoint) {
                 if (endpoint.documentsQueryStatus === 'Active') {
                     endpoint.isClearing = true;
-                    commonService.cancelDocumentQueryEndpoint(patient.id, endpoint.endpoint.id).then(function () {
+                    networkService.cancelDocumentQueryEndpoint(patient.id, endpoint.endpoint.id).then(function () {
                         vm.getPatientsAtAcf();
                     });
                 }
@@ -115,7 +115,7 @@
             }
 
             function dischargePatient (patient) {
-                commonService.dischargePatient(patient.id).then(function () {
+                networkService.dischargePatient(patient.id).then(function () {
                     vm.getPatientsAtAcf();
                 });
                 vm.deactivatePatient();
@@ -145,7 +145,7 @@
             }
 
             function getDocument (patient, doc) {
-                commonService.getDocument(patient.id, doc.id).then(function (response) {
+                networkService.getDocument(patient.id, doc.id).then(function (response) {
                     vm.activeDocument = response;
                 });
             }
@@ -153,7 +153,7 @@
             function getPatientsAtAcf () {
                 if (!vm.isQueryingPatients) {
                     vm.isQueryingPatients = true;
-                    commonService.getPatientsAtAcf().then(function (response) {
+                    networkService.getPatientsAtAcf().then(function (response) {
                         var hasActive = false;
                         vm.patients = response;
                         for (var i = 0; i < vm.patients.length; i++) {
@@ -206,7 +206,7 @@
                 if (endpoint.documentsQueryStatus === 'Failed' ||
                     endpoint.documentsQueryStatus === 'Cancelled') {
                     endpoint.isRequerying = true;
-                    commonService.requeryDocumentQueryEndpoint(patient.id, endpoint.endpoint.id).then(function () {
+                    networkService.requeryDocumentQueryEndpoint(patient.id, endpoint.endpoint.id).then(function () {
                         vm.getPatientsAtAcf();
                     });
                 }

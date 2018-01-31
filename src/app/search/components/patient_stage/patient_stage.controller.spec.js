@@ -2,7 +2,7 @@
     'use strict';
 
     describe('search.aiPatientStage', function () {
-        var $log, $q, $uibModal, Mock, actualOptions, commonService, mock, scope, vm;
+        var $log, $q, $uibModal, Mock, actualOptions, mock, networkService, scope, utilService, vm;
 
         mock = {};
         mock.badRequest = {
@@ -28,13 +28,13 @@
 
         beforeEach(function () {
             module('pulse.mock', 'portal', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
+                $provide.decorator('networkService', function ($delegate) {
                     $delegate.clearQuery = jasmine.createSpy('clearQuery');
                     $delegate.stagePatient = jasmine.createSpy('stagePatient');
                     return $delegate;
                 });
             });
-            inject(function ($controller, _$log_, _$q_, $rootScope, _$uibModal_, _Mock_, _commonService_) {
+            inject(function ($controller, _$log_, _$q_, $rootScope, _$uibModal_, _Mock_, _networkService_, _utilService_) {
                 $log = _$log_;
                 $uibModal = _$uibModal_;
                 $q = _$q_;
@@ -43,11 +43,12 @@
                     actualOptions = options;
                     return Mock.fakeModal;
                 });
-                commonService = _commonService_;
-                commonService.clearQuery.and.returnValue($q.when({}));
-                commonService.stagePatient.and.returnValue($q.when({}));
+                networkService = _networkService_;
+                networkService.clearQuery.and.returnValue($q.when({}));
+                networkService.stagePatient.and.returnValue($q.when({}));
+                utilService = _utilService_;
                 mock.query = Mock.queries[0];
-                mock.queriedPatient.dateOfBirthString = commonService.convertDobString(mock.queriedPatient.dateOfBirth),
+                mock.queriedPatient.dateOfBirthString = utilService.convertDobString(mock.queriedPatient.dateOfBirth),
                 mock.fakeModalOptions = Mock.fakeModalOptions;
                 mock.fakeModalOptions.templateUrl = 'app/search/components/patient_stage_details/patient_stage_details.html';
                 mock.fakeModalOptions.controller = 'PatientStageDetailsController';
@@ -83,18 +84,18 @@
         });
 
         describe('viewing', function () {
-            it('should call commonService to display names', function () {
-                spyOn(commonService, 'displayNames');
+            it('should call utilService to display names', function () {
+                spyOn(utilService, 'displayNames');
                 expect(vm.displayNames).toBeDefined();
                 vm.displayNames([mock.name]);
-                expect(commonService.displayNames).toHaveBeenCalledWith([mock.name],'<br />');
+                expect(utilService.displayNames).toHaveBeenCalledWith([mock.name],'<br />');
             });
 
-            it('should call commonService to get the guessed patient name', function () {
-                spyOn(commonService, 'friendlyFullName');
+            it('should call utilService to get the guessed patient name', function () {
+                spyOn(utilService, 'friendlyFullName');
                 expect(vm.friendlyFullName).toBeDefined();
                 vm.friendlyFullName([mock.name]);
-                expect(commonService.friendlyFullName).toHaveBeenCalledWith([mock.name]);
+                expect(utilService.friendlyFullName).toHaveBeenCalledWith([mock.name]);
             });
         });
 
@@ -119,14 +120,14 @@
                     expect(vm.stagePatient).toBeDefined();
                 });
 
-                it('should call commonService.stagePatient when stagePatient is called', function () {
+                it('should call networkService.stagePatient when stagePatient is called', function () {
                     vm.stagePatient();
                     scope.$digest();
-                    expect(commonService.stagePatient).toHaveBeenCalledWith(patientStage);
+                    expect(networkService.stagePatient).toHaveBeenCalledWith(patientStage);
                 });
 
                 it('should show an error if stage goes wrong', function () {
-                    commonService.stagePatient.and.returnValue($q.reject({data: mock.badRequest}));
+                    networkService.stagePatient.and.returnValue($q.reject({data: mock.badRequest}));
                     vm.stagePatient();
                     scope.$digest();
                     expect(vm.errorMessage).toBe(mock.badRequest.error);
@@ -137,10 +138,10 @@
                     expect(mock.modalInstance.close).toHaveBeenCalled();
                 });
 
-                it('should not call commonService.stagePatient if there are no selected records', function () {
+                it('should not call networkService.stagePatient if there are no selected records', function () {
                     vm.query.endpointStatuses[1].results[0].selected = false;
                     vm.stagePatient();
-                    expect(commonService.stagePatient).not.toHaveBeenCalled();
+                    expect(networkService.stagePatient).not.toHaveBeenCalled();
                 });
 
                 it('should have a function to check if the patient can be staged', function () {
@@ -176,7 +177,7 @@
             describe('clearing a query', function () {
                 it('should have a way to clear a query', function () {
                     vm.clearQuery();
-                    expect(commonService.clearQuery).toHaveBeenCalledWith(vm.query.id);
+                    expect(networkService.clearQuery).toHaveBeenCalledWith(vm.query.id);
                 });
 
                 it('should dismiss the modal when a query is called', function () {

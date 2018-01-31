@@ -20,7 +20,7 @@
         return directive;
 
         /** @ngInject */
-        function AcfController ($log, $location, commonService, acfWritesAllowed) {
+        function AcfController ($log, $location, acfWritesAllowed, authService, networkService) {
             var vm = this;
 
             vm.acfSubmit = acfSubmit;
@@ -30,7 +30,7 @@
             vm.getAcfs = getAcfs;
             vm.getName = getName;
             vm.getUserAcf = getUserAcf;
-            vm.hasAcf = hasAcf;
+            vm.hasAcf = authService.hasAcf;
             vm.splitAcfIdentifiers = splitAcfIdentifiers;
             vm.submitForm = submitForm;
             vm.validIdentifier = validIdentifier;
@@ -60,8 +60,8 @@
                     } else {
                         delete vm.acf.address.lines;
                     }
-                    commonService.createAcf(vm.acf).then(function (response) {
-                        commonService.setAcf(response).then(function () {
+                    networkService.createAcf(vm.acf).then(function (response) {
+                        networkService.setAcf(response).then(function () {
                             $location.path('/search');
                         });
                     }, function (error) {
@@ -70,7 +70,7 @@
                 } else {
                     vm.findAcf();
                     if (vm.selectAcf) {
-                        commonService.setAcf(vm.selectAcf).then(function () {
+                        networkService.setAcf(vm.selectAcf).then(function () {
                             $location.path('/search');
                         });
                     }
@@ -83,7 +83,7 @@
             }
 
             function editAcf () {
-                commonService.editAcf(vm.acf).then(function (response) {
+                networkService.editAcf(vm.acf).then(function (response) {
                     vm.acf = response;
                 });
                 vm.mode = 'view';
@@ -103,7 +103,7 @@
 
             function getAcfs () {
                 vm.acfs = [];
-                commonService.getAcfs().then(function (response) {
+                networkService.getAcfs().then(function (response) {
                     vm.acfs = vm.acfs.concat(response);
                     vm.splitAcfIdentifiers();
                     if (vm.acfs.length === 0) {
@@ -130,7 +130,7 @@
 
             function getUserAcf () {
                 if (vm.hasAcf()) {
-                    var acf = commonService.getUserAcf();
+                    var acf = authService.getUserAcf();
                     if (acf === '') {
                         vm.acf = {address: {lines: ['']}};
                     } else if (acf === null) {
@@ -145,10 +145,6 @@
                         }
                     }
                 }
-            }
-
-            function hasAcf () {
-                return commonService.hasAcf();
             }
 
             function splitAcfIdentifiers () {

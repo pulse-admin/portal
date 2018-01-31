@@ -29,14 +29,14 @@
         return directive;
 
         /** @ngInject */
-        function PatientReviewController ($log, $rootScope, $scope, $timeout, $uibModal, QueryQueryTimeout, commonService) {
+        function PatientReviewController ($log, $rootScope, $scope, $timeout, $uibModal, QueryQueryTimeout, networkService, utilService) {
             var vm = this;
 
             vm.cancelQueryEndpoint = cancelQueryEndpoint;
             vm.clearQuery = clearQuery;
-            vm.convertDobString = commonService.convertDobString;
+            vm.convertDobString = utilService.convertDobString;
             vm.countComplete = countComplete;
-            vm.displayName = displayName;
+            vm.displayName = utilService.displayName;
             vm.displayNames = displayNames;
             vm.getQueries = getQueries;
             vm.getRecordCount = getRecordCount;
@@ -56,12 +56,12 @@
 
             function cancelQueryEndpoint (endpointStatus) {
                 endpointStatus.isClearing = true;
-                commonService.cancelQueryEndpoint(endpointStatus.queryId, endpointStatus.endpoint.id);
+                networkService.cancelQueryEndpoint(endpointStatus.queryId, endpointStatus.endpoint.id);
             }
 
             function clearQuery (query) {
                 shallowClearQuery(query);
-                commonService.clearQuery(query.id).then(function () {
+                networkService.clearQuery(query.id).then(function () {
                     vm.getQueries();
                 });
             }
@@ -76,12 +76,8 @@
                 return count;
             }
 
-            function displayName (name) {
-                return commonService.displayName(name);
-            }
-
             function displayNames (names) {
-                return commonService.displayNames(names, '<br />');
+                return utilService.displayNames(names, '<br />');
             }
 
             function getQueries () {
@@ -106,7 +102,7 @@
 
             function requeryEndpoint (endpoint) {
                 endpoint.isRequerying = true;
-                commonService.requeryEndpoint(endpoint.queryId, endpoint.endpoint.id).then(function () {
+                networkService.requeryEndpoint(endpoint.queryId, endpoint.endpoint.id).then(function () {
                     vm.getQueries();
                 });
             }
@@ -140,7 +136,7 @@
 
             function getQueryHelper () {
                 vm.activeQuery = true;
-                commonService.getQueries().then(function (response) {
+                networkService.getQueries().then(function (response) {
                     var stillActive = false;
                     vm.patientQueries = response;
                     for (var i = 0; i < vm.patientQueries.length; i++) {

@@ -2,16 +2,11 @@
     'use strict';
 
     describe('navbar.directive', function () {
-        var $log, $q, commonService, el, scope, vm;
-        var mock = {statistics: [
-            {location: {name: 'Santa Cruz',id: 1,locationId: null,adapter: 'eHealth',active: true},calculationStart: null,calculationEnd: null,calculationNumRequests: null,patientDiscoveryStats: {requestCount: 1,requestSuccessCount: 1,requestFailureCount: 0,requestCancelledCount: 0,requestAvgCompletionSeconds: 78,requestSuccessAvgCompletionSeconds: 78,requestFailureAvgCompletionSeconds: null,requestCancelledAvgCompletionSeconds: null}},
-            {location: {name: 'Sutter Health',id: 2,locationId: null,adapter: 'eHealth',active: true},calculationStart: null,calculationEnd: null,calculationNumRequests: null,patientDiscoveryStats: {requestCount: 1,requestSuccessCount: 1,requestFailureCount: 0,requestCancelledCount: 0,requestAvgCompletionSeconds: 69,requestSuccessAvgCompletionSeconds: 69,requestFailureAvgCompletionSeconds: null,requestCancelledAvgCompletionSeconds: null}},
-            {location: {name: 'Dignity Health',id: 3,locationId: null,adapter: 'eHealth',active: true},calculationStart: null,calculationEnd: null,calculationNumRequests: null,patientDiscoveryStats: {requestCount: 1,requestSuccessCount: 1,requestFailureCount: 0,requestCancelledCount: 0,requestAvgCompletionSeconds: 63,requestSuccessAvgCompletionSeconds: 63,requestFailureAvgCompletionSeconds: null,requestCancelledAvgCompletionSeconds: null}}]};
+        var $log, authService, el, scope, vm;
 
         beforeEach(function () {
             module('portal', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
-                    $delegate.getLocationStatistics = jasmine.createSpy('getLocationStatistics');
+                $provide.decorator('authService', function ($delegate) {
                     $delegate.getUserAcf = jasmine.createSpy('getUserAcf');
                     $delegate.getUserName = jasmine.createSpy('getUserName');
                     $delegate.hasAcf = jasmine.createSpy('hasAcf');
@@ -21,11 +16,9 @@
                     return $delegate;
                 });
             });
-            inject(function ($compile, _$log_, _$q_, $rootScope, _commonService_) {
+            inject(function ($compile, _$log_, $rootScope, _authService_) {
                 $log = _$log_;
-                $q = _$q_;
-                commonService = _commonService_;
-                commonService.getLocationStatistics.and.returnValue($q.when(mock.statistics));
+                authService = _authService_;
 
                 el = angular.element('<ai-navbar></ai-navbar>');
 
@@ -53,37 +46,37 @@
         it('should know if the user is logged in', function () {
             expect(vm.isAuthenticated).toBeDefined();
             vm.isAuthenticated();
-            expect(commonService.isAuthenticated).toHaveBeenCalled();
+            expect(authService.isAuthenticated).toHaveBeenCalled();
         });
 
         it('should know the user\'s username', function () {
             expect(vm.getUserName).toBeDefined();
             vm.getUserName();
-            expect(commonService.getUserName).toHaveBeenCalled();
+            expect(authService.getUserName).toHaveBeenCalled();
         });
 
         it('should know if the user has an ACF', function () {
             expect(vm.hasAcf).toBeDefined();
             vm.hasAcf();
-            expect(commonService.hasAcf).toHaveBeenCalled();
+            expect(authService.hasAcf).toHaveBeenCalled();
         });
 
         it('should know the user\'s ACF', function () {
             expect(vm.getUserAcf).toBeDefined();
             vm.getUserAcf();
-            expect(commonService.getUserAcf).toHaveBeenCalled();
+            expect(authService.getUserAcf).toHaveBeenCalled();
         });
 
         it('should have a way to log out', function () {
             expect(vm.logout).toBeDefined();
             vm.logout();
-            expect(commonService.logout).toHaveBeenCalled();
+            expect(authService.logout).toHaveBeenCalled();
         });
 
-        it('should call the commonService.refreshToken on a Keepalive ping', function () {
+        it('should call the authService.refreshToken on a Keepalive ping', function () {
             scope.$broadcast('Keepalive');
             scope.$digest();
-            expect(commonService.refreshToken).toHaveBeenCalled();
+            expect(authService.refreshToken).toHaveBeenCalled();
         });
 
         it('should log when Idle happens', function () {
@@ -93,10 +86,10 @@
             expect($log.warn.logs.length).toBe(initialLogLength + 1);
         });
 
-        it('should call the commonService.logout on a IdleTimeout ping', function () {
+        it('should call the authService.logout on a IdleTimeout ping', function () {
             scope.$broadcast('IdleTimeout');
             scope.$digest();
-            expect(commonService.logout).toHaveBeenCalled();
+            expect(authService.logout).toHaveBeenCalled();
         });
     });
 })();

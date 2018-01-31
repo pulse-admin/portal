@@ -46,15 +46,15 @@
                     </div>
                   </td>
                   <td>
-                    <button ng-if="query.status === 'Complete' && query.recordCount !== 0" class="btn btn-success btn-sm" ng-click="vm.stagePatient(query)"><i class="fa fa-plus"></i><span class="sr-only">Stage {{ commonService.displayName(query.terms.name) }}</span></button>
+                    <button ng-if="query.status === 'Complete' && query.recordCount !== 0" class="btn btn-success btn-sm" ng-click="vm.stagePatient(query)"><i class="fa fa-plus"></i><span class="sr-only">Stage {{ utilService.displayName(query.terms.name) }}</span></button>
                     <button ng-if="query.status !== 'Complete' || query.recordCount === 0" class="btn btn-danger btn-sm"
                             confirm="Are you sure you'd like to clear this Patient Query?"
                             confirm-title="Confirmation"
                             confirm-ok="Yes"
                             confirm-cancel="No"
                             confirm-settings="{animation: false, keyboard: false, backdrop: 'static'}"
-                            ng-click="vm.clearQuery(query)"><i class="fa fa-trash"></i><span class="sr-only">Clear query for {{ commonService.displayName(query.terms.name) }}</span></button>
-                    <button ng-if="query.status === 'Complete'" class="btn btn-primary btn-sm" ng-click="vm.requery(query)"><i class="fa fa-refresh"></i><span class="sr-only">Redo query for {{ commonService.displayName(query.terms.name) }}</span></button>
+                            ng-click="vm.clearQuery(query)"><i class="fa fa-trash"></i><span class="sr-only">Clear query for {{ utilService.displayName(query.terms.name) }}</span></button>
+                    <button ng-if="query.status === 'Complete'" class="btn btn-primary btn-sm" ng-click="vm.requery(query)"><i class="fa fa-refresh"></i><span class="sr-only">Redo query for {{ utilService.displayName(query.terms.name) }}</span></button>
                   </td>
                 </tr>
               </tbody>

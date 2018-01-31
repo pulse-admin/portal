@@ -6,7 +6,7 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController ($location, $log, $timeout, AuthAPI, IDP, commonService) {
+    function MainController ($location, $log, $timeout, AuthAPI, IDP, authService) {
         var vm = this;
 
         vm.hasAcf = hasAcf;
@@ -18,14 +18,14 @@
         ////////////////////////////////////////////////////////////////////
 
         function activate () {
-            vm.commonService = commonService;
+            vm.authService = authService;
             vm.authAction = AuthAPI + '/saml/login?disco=true';
             vm.willRedirect = false;
             vm.IDP = IDP;
 
-            commonService.getSamlUserToken().then(function (response) {
+            authService.getSamlUserToken().then(function (response) {
                 if (angular.isDefined(response)) {
-                    commonService.getToken(true);
+                    authService.getToken(true);
                     if (vm.hasAcf()) {
                         $location.path('/search');
                     }
@@ -38,11 +38,11 @@
         }
 
         function hasAcf () {
-            return commonService.hasAcf();
+            return authService.hasAcf();
         }
 
         function isAuthenticated () {
-            return commonService.isAuthenticated();
+            return authService.isAuthenticated();
         }
 
         function redirectToDhv () {

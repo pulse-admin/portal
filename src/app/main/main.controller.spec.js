@@ -2,34 +2,34 @@
     'use strict';
 
     describe('main.controller', function () {
-        var $log, $q, $timeout, $window, commonService, ctrl, location, mock, scope, vm;
+        var $log, $q, $timeout, $window, authService, ctrl, location, mock, scope, vm;
         mock = {
             token: 'a token here',
         };
 
         beforeEach(function () {
             module('portal.main', 'portal.constants', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
-                    $delegate.isAuthenticated = jasmine.createSpy('isAuthenticated');
-                    $delegate.hasAcf = jasmine.createSpy('hasAcf');
+                $provide.decorator('authService', function ($delegate) {
                     $delegate.getSamlUserToken = jasmine.createSpy('getSamlUserToken');
                     $delegate.getToken = jasmine.createSpy('getToken');
+                    $delegate.hasAcf = jasmine.createSpy('hasAcf');
+                    $delegate.isAuthenticated = jasmine.createSpy('isAuthenticated');
                     return $delegate;
                 });
             });
 
-            inject(function ($controller, _$location_, _$log_, _$q_, $rootScope, _$timeout_, _$window_, _commonService_) {
+            inject(function ($controller, _$location_, _$log_, _$q_, $rootScope, _$timeout_, _$window_, _authService_) {
                 $log = _$log_;
                 ctrl = $controller;
                 $timeout = _$timeout_;
                 location = _$location_;
                 $window = _$window_;
                 $q = _$q_;
-                commonService = _commonService_;
-                commonService.isAuthenticated.and.returnValue(true);
-                commonService.hasAcf.and.returnValue(false);
-                commonService.getSamlUserToken.and.returnValue($q.when(mock.token));
-                commonService.getToken.and.returnValue(mock.token);
+                authService = _authService_;
+                authService.getSamlUserToken.and.returnValue($q.when(mock.token));
+                authService.getToken.and.returnValue(mock.token);
+                authService.hasAcf.and.returnValue(false);
+                authService.isAuthenticated.and.returnValue(true);
 
                 spyOn($window.location, 'replace');
 
@@ -52,21 +52,21 @@
 
         it('should know if the user has an ACF', function () {
             expect(vm.hasAcf).toBeDefined();
-            commonService.hasAcf.and.returnValue(true);
+            authService.hasAcf.and.returnValue(true);
             scope.$digest();
             expect(vm.hasAcf()).toBeTruthy();
         });
 
         it('should call for a SAML based user token', function () {
-            expect(commonService.getSamlUserToken).toHaveBeenCalled();
+            expect(authService.getSamlUserToken).toHaveBeenCalled();
         });
 
         it('should call for the PULSE token if the SAML request returns a token', function () {
-            expect(commonService.getToken).toHaveBeenCalledWith(true);
+            expect(authService.getToken).toHaveBeenCalledWith(true);
         });
 
         it('should redirect the user to search if they have an acf', function () {
-            commonService.hasAcf.and.returnValue(true);
+            authService.hasAcf.and.returnValue(true);
             vm = ctrl('MainController');
             spyOn(location, 'path');
             scope.$digest();
@@ -82,7 +82,7 @@
 
         it('should be ready to redirect the user to DHV if they don\'t have a SAML based token', function () {
             expect(vm.willRedirect).toBe(false);
-            commonService.getSamlUserToken.and.returnValue($q.reject('no token'));
+            authService.getSamlUserToken.and.returnValue($q.reject('no token'));
             vm = ctrl('MainController');
             scope.$digest();
             expect(vm.willRedirect).toBe(true);
@@ -90,7 +90,7 @@
 
         it('should be ready to redirect the user to DHV if they have an undefined SAML based token', function () {
             expect(vm.willRedirect).toBe(false);
-            commonService.getSamlUserToken.and.returnValue($q.when(undefined));
+            authService.getSamlUserToken.and.returnValue($q.when(undefined));
             vm = ctrl('MainController');
             scope.$digest();
             expect(vm.willRedirect).toBe(true);

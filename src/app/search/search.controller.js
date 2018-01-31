@@ -6,7 +6,7 @@
         .controller('SearchController', SearchController);
 
     /** @ngInject */
-    function SearchController ($location, $log, commonService) {
+    function SearchController ($location, $log, authService) {
         var vm = this;
 
         vm.hasAcf = hasAcf;
@@ -14,7 +14,7 @@
         vm.registerHandler = registerHandler;
         vm.triggerHandlers = triggerHandlers;
 
-        vm.commonService = commonService;
+        vm.authService = authService;
 
         activate();
 
@@ -31,11 +31,11 @@
         }
 
         function hasAcf () {
-            return commonService.hasAcf();
+            return authService.hasAcf();
         }
 
         function isAuthenticated () {
-            return commonService.isAuthenticated();
+            return authService.isAuthenticated();
         }
 
         function registerHandler (handler) {

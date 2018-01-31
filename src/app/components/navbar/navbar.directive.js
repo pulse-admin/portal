@@ -21,14 +21,14 @@
         return directive;
 
         /** @ngInject */
-        function NavbarController ($log, $scope, Idle, commonService) {
+        function NavbarController ($log, $scope, Idle, authService) {
             var vm = this;
 
-            vm.isAuthenticated = isAuthenticated;
-            vm.getUserAcf = getUserAcf;
-            vm.getUserName = getUserName;
-            vm.hasAcf = hasAcf;
-            vm.logout = logout;
+            vm.isAuthenticated = authService.isAuthenticated;
+            vm.getUserAcf = authService.getUserAcf;
+            vm.getUserName = authService.getUserName;
+            vm.hasAcf = authService.hasAcf;
+            vm.logout = authService.logout;
 
             activate();
 
@@ -39,7 +39,7 @@
                 Idle.watch();
                 $scope.$on('Keepalive', function () {
                     $log.info('Keepalive');
-                    commonService.refreshToken();
+                    authService.refreshToken();
                 });
                 $scope.$on('IdleWarn', function (e, countdown) {
                     $log.warn('User will be logged out in ' + countdown + ' seconds');
@@ -47,26 +47,6 @@
                 $scope.$on('IdleTimeout', function () {
                     vm.logout();
                 });
-            }
-
-            function isAuthenticated () {
-                return commonService.isAuthenticated();
-            }
-
-            function getUserAcf () {
-                return commonService.getUserAcf();
-            }
-
-            function getUserName () {
-                return commonService.getUserName();
-            }
-
-            function hasAcf () {
-                return commonService.hasAcf();
-            }
-
-            function logout () {
-                commonService.logout();
             }
         }
     }
