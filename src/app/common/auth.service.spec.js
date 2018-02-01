@@ -3,7 +3,7 @@
 
     describe('the Authentication services', function () {
 
-        var $httpBackend, $log, $window, API, AuthAPI, authService, mock, requestHandler;
+        var $httpBackend, $log, $q, $window, API, AuthAPI, authService, mock, networkService, requestHandler;
 
         requestHandler = {};
         mock = {};
@@ -25,18 +25,27 @@
         var tokenSuffix = '.Fo482cebe7EfuTtGHjvgsMByC0l-V8ZULMlCNVoxWmI'
 
         beforeEach(function () {
-            module('portal.common', 'portal.constants');
+            module('portal.common', 'portal.constants', function ($provide) {
+                $provide.decorator('networkService', function ($delegate) {
+                    $delegate.emptyFunction = jasmine.createSpy('emptyFunction');
+                    return $delegate;
+                });
+            });
 
-            inject(function (_$httpBackend_, $localStorage, _$log_, _$window_, _API_, _AuthAPI_, _authService_) {
-                authService = _authService_;
+            inject(function (_$httpBackend_, $localStorage, _$log_, _$q_, _$window_, _API_, _AuthAPI_, _authService_, _networkService_) {
                 $httpBackend = _$httpBackend_;
                 $log = _$log_;
+                $q = _$q_;
                 $window = _$window_;
+                API = _API_;
+                AuthAPI = _AuthAPI_;
+                authService = _authService_;
+                networkService = _networkService_;
+                networkService.emptyFunction.and.returnValue($q.when({}));
+
                 mock.jwt = generateJwt({acf: mock.userAcf});
                 mock.token = tokenPrefix + $window.btoa(mock.jwt) + tokenSuffix;
                 mock.tokenWOAcf = tokenPrefix + $window.btoa(generateJwt({acf: undefined})) + tokenSuffix;
-                API = _API_;
-                AuthAPI = _AuthAPI_;
                 delete($localStorage.jwtToken);
 
                 spyOn($window.location, 'replace');
