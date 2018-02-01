@@ -8,7 +8,7 @@
         requestHandler = {};
         mock = {};
         mock.userAcf = {name: 'ACF Number 1', address: {}, id: 1};
-        var user = {
+        mock.user = {
             user_id: 'user_id',
             username: 'username',
             auth_source: 'auth_source',
@@ -20,34 +20,31 @@
             acf: mock.userAcf,
             authorities: ['ROLE_ADMIN'],
         };
-        var iatDate = new Date();
-        var expDate = new Date();
-        expDate.setDate(expDate.getDate() + 1);
-        var jwt = angular.toJson({sub: user.username, iat: iatDate.getTime(), exp: expDate.getTime(), Identity: [user.user_id, user.username, user.auth_source, user.full_name, user.organization, user.purpose_for_use, user.role, user.pulseUserId, mock.userAcf], Authorities: user.authorities});
-        var jwtWithoutAcf = angular.toJson({sub: user.username, iat: iatDate.getTime(), exp: expDate.getTime(), Identity: [user.user_id, user.username, user.auth_source, user.full_name, user.organization, user.purpose_for_use, user.role, user.pulseUserId], Authorities: user.authorities});
-
+        mock.acfs = [{id: 1, name: 'ACF 1', address: {}}, {id: 2, name: 'ACF 2', address: {}}];
         var tokenPrefix = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.';
         var tokenSuffix = '.Fo482cebe7EfuTtGHjvgsMByC0l-V8ZULMlCNVoxWmI'
-        mock.acfs = [{id: 1, name: 'ACF 1', address: {}}, {id: 2, name: 'ACF 2', address: {}}];
 
-        beforeEach(module('portal.common', 'portal.constants'));
+        beforeEach(function () {
+            module('portal.common', 'portal.constants');
 
-        beforeEach(inject(function (_$httpBackend_, $localStorage, _$log_, _$window_, _API_, _AuthAPI_, _authService_) {
-            authService = _authService_;
-            $httpBackend = _$httpBackend_;
-            $log = _$log_;
-            $window = _$window_;
-            mock.token = tokenPrefix + $window.btoa(jwt) + tokenSuffix;
-            mock.tokenWOAcf = tokenPrefix + $window.btoa(jwtWithoutAcf) + tokenSuffix;
-            API = _API_;
-            AuthAPI = _AuthAPI_;
-            delete($localStorage.jwtToken);
+            inject(function (_$httpBackend_, $localStorage, _$log_, _$window_, _API_, _AuthAPI_, _authService_) {
+                authService = _authService_;
+                $httpBackend = _$httpBackend_;
+                $log = _$log_;
+                $window = _$window_;
+                mock.jwt = generateJwt({acf: mock.userAcf});
+                mock.token = tokenPrefix + $window.btoa(mock.jwt) + tokenSuffix;
+                mock.tokenWOAcf = tokenPrefix + $window.btoa(generateJwt({acf: undefined})) + tokenSuffix;
+                API = _API_;
+                AuthAPI = _AuthAPI_;
+                delete($localStorage.jwtToken);
 
-            spyOn($window.location, 'replace');
-            requestHandler.getAcf = $httpBackend.whenGET(API + '/acfs/1').respond(200, mock.acfs[0]);
-            requestHandler.getSamlUserToken = $httpBackend.whenGET(AuthAPI + '/jwt').respond(200, {token: mock.token});
-            requestHandler.refreshToken = $httpBackend.whenPOST(AuthAPI + '/jwt/keepalive', mock.acfs[0]).respond(200, {token: mock.token});
-        }));
+                spyOn($window.location, 'replace');
+                requestHandler.getAcf = $httpBackend.whenGET(API + '/acfs/1').respond(200, mock.acfs[0]);
+                requestHandler.getSamlUserToken = $httpBackend.whenGET(AuthAPI + '/jwt').respond(200, {token: mock.token});
+                requestHandler.refreshToken = $httpBackend.whenPOST(AuthAPI + '/jwt/keepalive', mock.acfs[0]).respond(200, {token: mock.token});
+            })
+        });
 
         afterEach(function () {
             if ($log.debug.logs.length > 0) {
@@ -130,18 +127,18 @@
         it('should have a way to display the token parameters', function () {
             authService.saveToken(mock.token);
             var storedJwt = authService.getTokenVals();
-            expect(storedJwt).toEqual(angular.fromJson(jwt));
+            expect(storedJwt).toEqual(angular.fromJson(mock.jwt));
         });
 
         it('should have a way to get the entire user\'s identity', function () {
             expect(authService.getUserIdentity).toBeDefined();
-            expect(authService.getUserIdentity()).not.toEqual(user);
+            expect(authService.getUserIdentity()).not.toEqual(mock.user);
             authService.saveToken(mock.token);
-            expect(authService.getUserIdentity()).toEqual(user);
+            expect(authService.getUserIdentity()).toEqual(mock.user);
         });
 
         it('should have a way to get the entire user\'s identity even if without ACF', function () {
-            var userWOAcf = angular.copy(user);
+            var userWOAcf = angular.copy(mock.user);
             delete(userWOAcf.acf);
             expect(authService.getUserIdentity()).not.toEqual(userWOAcf);
             authService.saveToken(mock.tokenWOAcf);
@@ -171,5 +168,48 @@
             authService.clearToken();
             expect(authService.hasAcf()).toBeFalsy();
         });
+
+        describe('with respect to roles', function () {
+            beforeEach(function () {
+                authService.saveToken(mock.token);
+            });
+
+            it('should know if a user has a role', function () {
+                expect(authService.hasRole(['ROLE_ADMIN'])).toBe(true);
+            });
+
+            it('should know if a user does not have a role', function () {
+                expect(authService.hasRole(['ROLE_PROVIDER'])).toBe(false);
+            });
+
+            it('should know if a user has any of a set of roles', function () {
+                expect(authService.hasRole(['ROLE_ADMIN', 'ROLE_PROVIDER'])).toBe(true);
+            });
+
+            it('should know if a user does not have any of a set of roles', function () {
+                expect(authService.hasRole(['ROLE_ORGANIZATIONAL_ADMIN', 'ROLE_PROVIDER'])).toBe(false);
+            });
+        });
+
+        function generateJwt (options) {
+            var user = angular.copy(mock.user);
+            var iatDate = new Date();
+            var expDate = new Date();
+            expDate.setDate(expDate.getDate() + 1);
+            var data = {
+                sub: user.username,
+                iat: iatDate.getTime(),
+                exp: expDate.getTime(),
+                Identity: [user.user_id, user.username, user.auth_source, user.full_name, user.organization, user.purpose_for_use, user.role, user.pulseUserId, options.acf],
+                Authorities: user.authorities,
+            };
+            var ret;
+            if (options && options.acf) {
+                data.Identity.push(options.acf);
+            }
+            ret = angular.toJson(data);
+
+            return ret;
+        }
     });
 })();

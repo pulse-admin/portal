@@ -18,6 +18,7 @@
             getUserIdentity: getUserIdentity,
             getUserName: getUserName,
             hasAcf: hasAcf,
+            hasRole: hasRole,
             isAuthenticated: isAuthenticated,
             logout: logout,
             refreshToken: refreshToken,
@@ -121,6 +122,14 @@
                 return false;
             }
         }
+
+        function hasRole (roles) {
+            var authorities = parseJwt(getToken()).Authorities;
+            return roles.reduce(function (acc, role) {
+                return acc || (authorities.indexOf(role) > -1);
+            }, false);
+        }
+
         function isAuthenticated () {
             var token, valid;
             token = getToken();
