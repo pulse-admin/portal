@@ -147,7 +147,7 @@
   </div>
   <div ng-if="vm.mode === 'view'">
     <h3>{{ vm.acf.identifier }}<small ng-if="vm.acf.name"> ({{ vm.acf.name }})</small></h3>
-    <a href ng-click="vm.mode = 'edit'" class="pull-right"><span class="sr-only">Edit information</span><i class="fa fa-pencil"></i></a>
+    <a href ng-click="vm.mode = 'edit'" class="pull-right" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_ORG_ADMIN'])"><span class="sr-only">Edit information</span><i class="fa fa-pencil"></i></a>
     <span ng-if="vm.acf.phoneNumber">{{ vm.acf.phoneNumber }}</span>
     <div ng-if="vm.acf.address && vm.acf.address"><ai-addresses fixed="true" addresses="[vm.acf.address]"></ai-addresses></div>
   </div>

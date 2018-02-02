@@ -31,6 +31,7 @@
             vm.getName = getName;
             vm.getUserAcf = getUserAcf;
             vm.hasAcf = authService.hasAcf;
+            vm.hasRole = authService.hasRole;
             vm.splitAcfIdentifiers = splitAcfIdentifiers;
             vm.submitForm = submitForm;
             vm.validIdentifier = validIdentifier;

@@ -10,6 +10,7 @@
         var vm = this;
 
         vm.hasAcf = hasAcf;
+        vm.hasRole = authService.hasRole;
         vm.isAuthenticated = isAuthenticated;
         vm.registerHandler = registerHandler;
         vm.triggerHandlers = triggerHandlers;

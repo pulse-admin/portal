@@ -10,6 +10,7 @@
                     $delegate.getUserAcf = jasmine.createSpy('getUserAcf');
                     $delegate.getUserName = jasmine.createSpy('getUserName');
                     $delegate.hasAcf = jasmine.createSpy('hasAcf');
+                    $delegate.hasRole = jasmine.createSpy('hasRole');
                     $delegate.isAuthenticated = jasmine.createSpy('isAuthenticated');
                     $delegate.logout = jasmine.createSpy('logout');
                     $delegate.refreshToken = jasmine.createSpy('refreshToken');
@@ -19,6 +20,7 @@
             inject(function ($compile, _$log_, $rootScope, _authService_) {
                 $log = _$log_;
                 authService = _authService_;
+                authService.hasRole.and.returnValue(true);
 
                 el = angular.element('<ai-navbar></ai-navbar>');
 

@@ -16,6 +16,7 @@
                 $provide.decorator('authService', function ($delegate) {
                     $delegate.getUserAcf = jasmine.createSpy('getUserAcf');
                     $delegate.hasAcf = jasmine.createSpy('hasAcf');
+                    $delegate.hasRole = jasmine.createSpy('hasRole');
                     return $delegate;
                 });
                 $provide.decorator('networkService', function ($delegate) {
@@ -37,6 +38,7 @@
                 authService = _authService_;
                 authService.getUserAcf.and.returnValue(Mock.acfs[0]);
                 authService.hasAcf.and.returnValue(true);
+                authService.hasRole.and.returnValue(true);
                 networkService = _networkService_;
                 networkService.createAcf.and.returnValue($q.when({response: angular.extend(mock.newAcf,{id: 4})}));
                 networkService.editAcf.and.returnValue($q.when(Mock.acfs[1]));

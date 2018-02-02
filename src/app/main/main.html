@@ -13,10 +13,15 @@
     </div>
   </div>
   <div ng-if="vm.isAuthenticated()">
-    <div class="row has-background">
+    <div class="row has-background" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])">
       <div class="col-sm-6 col-sm-offset-3">
         <ai-acf mode="select">
         </ai-acf>
+      </div>
+    </div>
+    <div class="row has-background" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_ORG_ADMIN'])">
+      <div class="col-sm-6 col-sm-offset-3">
+        TODO: Add ACF management for ROLE_ORGANIZATION_ADMIN
       </div>
     </div>
   </div>

@@ -28,6 +28,7 @@
             vm.getUserAcf = authService.getUserAcf;
             vm.getUserName = authService.getUserName;
             vm.hasAcf = authService.hasAcf;
+            vm.hasRole = authService.hasRole;
             vm.logout = authService.logout;
 
             activate();
