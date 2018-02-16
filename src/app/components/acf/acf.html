@@ -112,11 +112,6 @@
               <button ng-disabled="vm.queryForm.$invalid && vm.showFormErrors"
                       class="btn btn-success btn-block"
                       id="acfEdit"
-                      confirm="Only EMSA authorized personnel are permitted to modify an ACF's information."
-                      confirm-title="ACF editing authorization check"
-                      confirm-ok="I attest to being an EMSA-authorized user"
-                      confirm-cancel="Cancel"
-                      confirm-settings="{animation: false, keyboard: false, backdrop: 'static'}"
                       ng-mouseover="vm.showFormErrors = true"
                       ng-focus="vm.showFormErrors = true"
                       ng-click="vm.editAcf()">Save changes</button>

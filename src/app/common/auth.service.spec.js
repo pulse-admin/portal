@@ -7,7 +7,7 @@
 
         requestHandler = {};
         mock = {};
-        mock.userAcf = {name: 'ACF Number 1', address: {}, id: 1};
+        mock.userAcf = {name: 'ACF Number 1', identifier: 'ACF-1', address: {}, id: 1};
         mock.user = {
             user_id: 'user_id',
             username: 'username',
@@ -49,6 +49,7 @@
                 delete($localStorage.jwtToken);
 
                 spyOn($window.location, 'replace');
+                spyOn($window.location, 'reload');
                 requestHandler.getAcf = $httpBackend.whenGET(API + '/acfs/1').respond(200, mock.acfs[0]);
                 requestHandler.getSamlUserToken = $httpBackend.whenGET(AuthAPI + '/jwt').respond(200, {token: mock.token});
                 requestHandler.refreshToken = $httpBackend.whenPOST(AuthAPI + '/jwt/keepalive', mock.acfs[0]).respond(200, {token: mock.token});
@@ -112,9 +113,9 @@
             expect(authService.isAuthenticated()).toBeFalsy();
         });
 
-        it('should redirect the user to an external page on logout', function () {
+        it('should reload the user\'s page on logout', function () {
             authService.logout();
-            expect($window.location.replace).toHaveBeenCalledWith(AuthAPI + '/saml/logout');
+            expect($window.location.reload).toHaveBeenCalled();
         });
 
         it('should call the saml SP to find the Spring Boot User Object', function () {

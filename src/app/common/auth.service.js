@@ -112,7 +112,7 @@
             if (isAuthenticated()) {
                 var token = getToken();
                 var identity = parseJwt(token).Identity;
-                if (identity[ACF_LOCATION_IN_IDENTITY] && angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]) && angular.isString(angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]).name)) {
+                if (identity[ACF_LOCATION_IN_IDENTITY] && angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]) && angular.isString(angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]).identifier)) {
                     return true;
                 }
                 else {
@@ -152,7 +152,7 @@
 
         function logout () {
             clearToken();
-            $window.location.replace(AuthAPI + '/saml/logout');
+            $window.location.reload();
         }
 
         function refreshToken () {

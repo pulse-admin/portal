@@ -5,10 +5,7 @@
   <div ng-if="!vm.isAuthenticated()" class="fake-login">
     <div class="row has-background">
       <div class="col-sm-6 col-sm-offset-3">
-        <form role="log in" method="get" action="{{ vm.authAction }}" id="dhvForm" name="dhvForm">
-          <input type="hidden" name="idp" id="idp" value="{{ vm.IDP }}" dom-on-create="vm.redirectToDhv()"></input>
-        </form>
-        <h2 class="text-center">Communicating with DHV for login credentials...<i class="fa fa-spinner fa-spin"></i></h2>
+        Not logged in. This should not happen.
       </div>
     </div>
   </div>
