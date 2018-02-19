@@ -32,7 +32,6 @@
             vm.getUserAcf = getUserAcf;
             vm.hasAcf = authService.hasAcf;
             vm.hasRole = authService.hasRole;
-            vm.splitAcfIdentifiers = splitAcfIdentifiers;
             vm.submitForm = submitForm;
             vm.validIdentifier = validIdentifier;
 
@@ -106,13 +105,12 @@
                 vm.acfs = [];
                 networkService.getAcfs().then(function (response) {
                     vm.acfs = vm.acfs.concat(response);
-                    vm.splitAcfIdentifiers();
                     if (vm.acfs.length === 0) {
                         if (vm.mode === 'select') {
                             vm.mode = 'enter';
                         }
                     }
-                },function () {
+                }, function () {
                     vm.acfs = [];
                     if (vm.mode === 'select') {
                         vm.mode = 'enter';
@@ -143,23 +141,6 @@
                         }
                         if (angular.isUndefined(vm.acf.address.lines)) {
                             vm.acf.address.lines = [''];
-                        }
-                    }
-                }
-            }
-
-            function splitAcfIdentifiers () {
-                if (!vm.acfWritesAllowed) {
-                    vm.acfPrefixes = [];
-                    vm.acfSuffixes = [];
-                    var parts;
-                    for (var i = 0; i < vm.acfs.length; i++) {
-                        parts = vm.acfs[i].identifier.split('-');
-                        if (vm.acfPrefixes.indexOf(parts[0]) < 0) {
-                            vm.acfPrefixes.push(parts[0]);
-                        }
-                        if (vm.acfSuffixes.indexOf(parts[1]) < 0) {
-                            vm.acfSuffixes.push(parts[1]);
                         }
                     }
                 }

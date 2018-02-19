@@ -1,18 +1,28 @@
 (function () {
     'use strict';
 
-    describe('portal.aiAcf', function () {
+    describe('the ACF widget', function () {
         var $compile, $location, $log, $q, $rootScope, Mock, authService, el, mock, networkService, vm;
         mock = {};
-        mock.newAcf = {identifier: 'New-01',name: 'Fairgrounds',phoneNumber: '555-1895',address: {lines: ['133 Smith Gardn'],city: 'Albany',state: 'CA',zipcode: '94602',country: null}};
+        mock.newAcf = {
+            identifier: 'New-01',
+            name: 'Fairgrounds',
+            phoneNumber: '555-1895',
+            address: {
+                lines: ['133 Smith Gardn'],
+                city: 'Albany',
+                state: 'CA',
+                zipcode: '94602',
+                country: null,
+            },
+        };
         mock.badRequest = {
             status: 400,
             error: 'ACF identitifer is required.',
         };
 
         beforeEach(function () {
-            module('pulse.mock');
-            module('portal', function ($provide) {
+            module('portal', 'pulse.mock', function ($provide) {
                 $provide.decorator('authService', function ($delegate) {
                     $delegate.getUserAcf = jasmine.createSpy('getUserAcf');
                     $delegate.hasAcf = jasmine.createSpy('hasAcf');
@@ -28,6 +38,7 @@
                 });
                 $provide.constant('acfWritesAllowed', true);
             });
+
             inject(function (_$compile_, _$location_, _$log_, _$q_, _$rootScope_, _Mock_, _authService_, _networkService_) {
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
@@ -40,7 +51,7 @@
                 authService.hasAcf.and.returnValue(true);
                 authService.hasRole.and.returnValue(true);
                 networkService = _networkService_;
-                networkService.createAcf.and.returnValue($q.when({response: angular.extend(mock.newAcf,{id: 4})}));
+                networkService.createAcf.and.returnValue($q.when({response: angular.extend(mock.newAcf, {id: 4})}));
                 networkService.editAcf.and.returnValue($q.when(Mock.acfs[1]));
                 networkService.getAcfs.and.returnValue($q.when(Mock.acfs));
                 networkService.setAcf.and.returnValue($q.when({}));
@@ -55,7 +66,9 @@
 
         afterEach(function () {
             if ($log.debug.logs.length > 0) {
-                //console.debug("\n Debug: " + $log.debug.logs.join("\n Debug: "));
+                /* eslint-disable no-console,angular/log */
+                console.log('Debug:\n' + $log.debug.logs.map(function (o) { return angular.toJson(o); }).join('\n'));
+                /* eslint-enable no-console,angular/log */
             }
         });
 
@@ -339,21 +352,6 @@
         it('should know if the entered new ACF identifier matches one that already exists', function () {
             vm.acf = angular.copy(Mock.acfs[1]);
             expect(vm.validIdentifier()).toBe(false);
-        });
-
-        it('should split ACF identifiers into prefix/suffix if !acfWritesAllowed', function () {
-            vm.acfWritesAllowed = false;
-            vm.acfs = Mock.acfs;
-            vm.splitAcfIdentifiers();
-            expect(vm.acfPrefixes).toEqual(['Del Norte','Alameda','Los Angeles']);
-            expect(vm.acfSuffixes).toEqual(['04','01','02']);
-        });
-
-        it('should not split ACF identifiers into prefix/suffix if acfWritesAllowed', function () {
-            vm.acfWritesAllowed = true;
-            vm.splitAcfIdentifiers();
-            expect(vm.acfPrefixes).toBeUndefined();
-            expect(vm.acfSuffixes).toBeUndefined();
         });
 
         it('should compose an ACF if !acfWritesAllowed', function () {

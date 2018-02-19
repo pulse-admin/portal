@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    describe('main.controller', function () {
+    describe('the entry point', function () {
         var $location, $log, authService, ctrl, mock, scope;
         mock = {
             token: 'a token here',
