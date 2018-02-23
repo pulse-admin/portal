@@ -52,7 +52,7 @@
                 spyOn($window.location, 'reload');
                 requestHandler.getAcf = $httpBackend.whenGET(API + '/acfs/1').respond(200, mock.acfs[0]);
                 requestHandler.getSamlUserToken = $httpBackend.whenGET(AuthAPI + '/jwt').respond(200, {token: mock.token});
-                requestHandler.refreshToken = $httpBackend.whenPOST(AuthAPI + '/jwt/keepalive', mock.acfs[0]).respond(200, {token: mock.token});
+                requestHandler.refreshToken = $httpBackend.whenPOST(AuthAPI + '/jwt/keepAlive', mock.acfs[0]).respond(200, {token: mock.token});
             })
         });
 

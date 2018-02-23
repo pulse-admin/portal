@@ -51,6 +51,7 @@
                 this.getSamlUserToken().then(function (token) {
                     if (validTokenFormat(token)) {
                         saveToken(token);
+                        $log.info(getUserIdentity());
                         return token;
                     } else {
                         return null
@@ -80,6 +81,7 @@
             var user = { };
             if (isAuthenticated()) {
                 var token = parseJwt(getToken());
+                $log.info(token);
                 var identity = token.Identity;
                 var authorities = token.Authorities;
                 user.user_id = identity[0];
@@ -159,10 +161,11 @@
             var userAcf = getUserAcf();
             return getAcf(userAcf.id)
                 .then(function (result){
-                    return postApi('/jwt/keepalive', result, AuthAPI)
+                    return postApi('/jwt/keepAlive', result, AuthAPI)
                         .then(function (response) {
                             if (validTokenFormat(response.token)) {
                                 saveToken(response.token);
+                                $log.info(getUserIdentity());
                                 return $q.when(response.token);
                             } else {
                                 return $q.when(null);
