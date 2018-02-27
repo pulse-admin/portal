@@ -42,14 +42,19 @@
                     }
                  //$location.path('/search');
                 }
+                if (vm.mode === 'view') {
+                    vm.acf = authService.getUserAcf();
+                }
             }
 
             function createAcf () {
-                var org = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];
+                var liferayAcf = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];
+                var liferayState = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) === 'pulse-'; })[0];
                 var acf = {
-                    id: authService.getUserIdentity().orgs[org],
-                    identifier: org,
-                    name: org,
+                    liferayAcfId: authService.getUserIdentity().orgs[liferayAcf],
+                    liferayStateId: authService.getUserIdentity().orgs[liferayState],
+                    identifier: liferayAcf,
+                    name: liferayAcf,
                 }
                 networkService.createAcf(acf).then(function (response) {
                     networkService.setAcf(response);
