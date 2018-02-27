@@ -36,23 +36,24 @@
 
             function activate () {
                 vm.getAcfs();
-                /*
                 if (vm.mode === 'select' && !vm.hasRole(['ROLE_ADMIN'])) {
                     if (!vm.selectAcf()) {
                         vm.createAcf();
-                        vm.selectAcf();
                     }
-                    $location.path('/search');
-                }*/
+                 //$location.path('/search');
+                }
             }
 
             function createAcf () {
-                var org = authService.getUserIdentity().organization;
+                var org = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];
                 var acf = {
+                    id: authService.getUserIdentity().orgs[org],
                     identifier: org,
                     name: org,
                 }
-                networkService.createAcf(acf);
+                networkService.createAcf(acf).then(function (response) {
+                    networkService.setAcf(response);
+                });
             }
 
             function editAcf (acf) {
@@ -83,7 +84,7 @@
                         $location.path('/search');
                     });
                 } else {
-                    var org = authService.getUserIdentity().organization;
+                    var org = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];
                     var acf = vm.acfs.filter(function (acf) { return acf.identifier === org; })[0];
                     if (acf) {
                         networkService.setAcf(acf);
