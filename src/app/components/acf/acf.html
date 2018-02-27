@@ -34,4 +34,9 @@
     <span ng-if="vm.acf.phoneNumber">{{ vm.acf.phoneNumber }}</span>
     <div ng-if="vm.acf.address && vm.acf.address"><ai-addresses fixed="true" addresses="[vm.acf.address]"></ai-addresses></div>
   </div>
+  <div ng-if="vm.mode === 'select'">
+    <ul>
+      <li ng-repeat="acf in vm.acfs"><pre>{{ acf | json }}</pre></li>
+    </ul>
+  </div>
 </div>

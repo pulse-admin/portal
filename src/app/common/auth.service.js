@@ -7,7 +7,7 @@
 
     /** @ngInject */
     function authService ($http, $localStorage, $log, $q, $window, API, AuthAPI) {
-        var ACF_LOCATION_IN_IDENTITY = 8;
+        var ACF_LOCATION_IN_IDENTITY = 3;
 
         var service = {
             clearToken: clearToken,
@@ -83,19 +83,15 @@
                 var token = parseJwt(getToken());
                 $log.info(token);
                 var identity = token.Identity;
-                var authorities = token.Authorities;
                 user.user_id = identity[0];
                 user.username = identity[1];
-                user.auth_source = identity[2];
-                user.full_name = identity[3];
-                user.organization = identity[4];
-                user.purpose_for_use = identity[5];
-                user.role = identity[6];
-                user.pulseUserId = identity[7];
+                user.full_name = identity[2];
+                //user.pulseUserId = identity[3];
                 if (identity[ACF_LOCATION_IN_IDENTITY]) {
                     user.acf = identity[ACF_LOCATION_IN_IDENTITY];
                 }
-                user.authorities = authorities;
+                user.authorities = token.Authorities;
+                user.orgs = token.Orgs
             }
             return user;
         }
@@ -104,7 +100,7 @@
             if (isAuthenticated()) {
                 var token = getToken();
                 var identity = parseJwt(token).Identity;
-                return identity[3];
+                return identity[2];
             } else {
                 return '';
             }
@@ -115,6 +111,7 @@
                 var token = getToken();
                 var identity = parseJwt(token).Identity;
                 if (identity[ACF_LOCATION_IN_IDENTITY] && angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]) && angular.isString(angular.fromJson(identity[ACF_LOCATION_IN_IDENTITY]).identifier)) {
+                    $log.info('hasAcf');
                     return true;
                 }
                 else {

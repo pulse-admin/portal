@@ -36,13 +36,14 @@
 
             function activate () {
                 vm.getAcfs();
+                /*
                 if (vm.mode === 'select' && !vm.hasRole(['ROLE_ADMIN'])) {
                     if (!vm.selectAcf()) {
                         vm.createAcf();
                         vm.selectAcf();
                     }
                     $location.path('/search');
-                }
+                }*/
             }
 
             function createAcf () {
