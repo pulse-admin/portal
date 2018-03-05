@@ -19,8 +19,8 @@
           <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="login-toggle">
             <li ng-if="vm.hasAcf()"><ai-acf mode="view"></ai-acf>
             <li ng-if="vm.hasAcf()" role="separator" class="divider"></li>
-            <li><a href="#/search">Search</a></li>
-            <li><a href="#/review">Review</a></li>
+            <li ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/search">Search</a></li>
+            <li ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/review">Review</a></li>
             <li><a href="#/status">Location Status</a></li>
             <li>
               <button class="btn btn-primary btn-block" id="logoutButton" ng-click="vm.logout()">Log Out</button>

@@ -6,7 +6,7 @@
         .controller('StatusController', StatusController);
 
     /** @ngInject */
-    function StatusController ($log, commonService) {
+    function StatusController ($log, networkService) {
         var vm = this;
 
         activate();
@@ -57,26 +57,26 @@
                 type: 'GeoChart',
                 options: { region: 'US-CA', displayMode: 'markers', resolution: 'provinces' },
             }
-            commonService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgPiWlQoM')
+            networkService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgPiWlQoM')
                 .then(function (data) {
                     vm.browserVariety.data = data;
                 });
-            commonService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgNrjhgoM')
+            networkService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgNrjhgoM')
                 .then(function (data) {
                     vm.countries.data = data;
                     vm.worldMap.data = data;
                 });
-            commonService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgO2xgwoM')
+            networkService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgO2xgwoM')
                 .then(function (data) {
                     vm.states.data = data;
                     vm.stateMap.data = data;
                 });
-            commonService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgLyhggoM')
+            networkService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgLyhggoM')
                 .then(function (data) {
                     vm.cities.data = data;
                     vm.caMap.data = data;
                 });
-            commonService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgICAgAoM')
+            networkService.getAnalytics('ag5zfnB1bHNlLTE2MDkxNnIVCxIIQXBpUXVlcnkYgICAgICAgAoM')
                 .then(function (data) {
                     data.cols[0].type = 'date';
                     var date;

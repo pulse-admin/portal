@@ -5,17 +5,20 @@
   <div ng-if="!vm.isAuthenticated()" class="fake-login">
     <div class="row has-background">
       <div class="col-sm-6 col-sm-offset-3">
-        <form role="log in" method="get" action="{{ vm.authAction }}" id="dhvForm" name="dhvForm">
-          <input type="hidden" name="idp" id="idp" value="{{ vm.IDP }}" dom-on-create="vm.redirectToDhv()"></input>
-        </form>
-        <h2 class="text-center">Communicating with DHV for login credentials...<i class="fa fa-spinner fa-spin"></i></h2>
+        Not logged in. This should not happen.
       </div>
     </div>
   </div>
   <div ng-if="vm.isAuthenticated()">
-    <div class="row has-background">
+    <div class="row has-background" ng-if="vm.hasRole(['ROLE_PROVIDER'])">
       <div class="col-sm-6 col-sm-offset-3">
         <ai-acf mode="select">
+        </ai-acf>
+      </div>
+    </div>
+    <div class="row has-background" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_ORG_ADMIN'])">
+      <div class="col-sm-6 col-sm-offset-3">
+        <ai-acf mode="manage">
         </ai-acf>
       </div>
     </div>

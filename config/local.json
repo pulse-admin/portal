@@ -9,5 +9,5 @@
     'LocationQueryInterval': 60,
     'QueryQueryTimeout': 5,
     'SwaggerUrl': '/rest/api-docs',
-    'acfWritesAllowed': false
+    'acfWritesAllowed': true
 }

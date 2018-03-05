@@ -1,0 +1,42 @@
+<div class="acf-edit" role="modal" aria-labeled-by="titleLabel">
+  <div class="modal-header">
+    <button class="btn btn-default pull-right" aria-label="Cancel edits"
+            ng-click="vm.cancel()"><i class="fa fa-close"></i><span class="sr-only">Close modal</span></button>
+    <h2 class="modal-title" id="titleLabel">Edit an Alternate Care Facility (ACF)</h2>
+  </div>
+  <div class="modal-body">
+    <div class="form-horizontal" ng-form="vm.queryForm">
+      <div class="form-group">
+        <label for="acfName" class="col-sm-3 control-label">Name</label>
+        <div class="col-sm-9">
+          <input class="input-sm form-control" type="text" ng-keyup="$event.keyCode == 13 && vm.save()" ng-model="vm.acf.name" id="acfName" name="acfName"></input>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="acfPhoneNumber" class="col-sm-3 control-label">Number</label>
+        <div class="col-sm-9">
+          <input class="input-sm form-control" type="text" ng-keyup="$event.keyCode == 13 && vm.save()" ng-model="vm.acf.phoneNumber" id="acfPhoneNumber" name="acfPhoneNumber" placeholder="(424) 555-1234"></input>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-3 control-label">Address</label>
+        <div class="col-sm-9">
+          <ai-addresses addresses="[vm.acf.address]"
+                        max-lines="2"
+                        single="true"
+                        submit-form="vm.save"></ai-addresses>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-sm-12">
+        <button class="btn btn-success pull-right" ng-click="vm.save()">Save <i class="fa fa-save"></i></button>
+      </div>
+    </div>
+    <div class="row" ng-if="vm.errorMessage">
+      <div class="col-sm-12 bg-danger text-left">{{ vm.errorMessage }}</div>
+    </div>
+  </div>
+</div>

@@ -9,5 +9,5 @@
     'LocationQueryInterval': 60,
     'QueryQueryTimeout': 5,
     'SwaggerUrl': 'https://pulse.emsa.ca.gov/rest/api-docs',
-    'acfWritesAllowed': false
+    'acfWritesAllowed': true
 }

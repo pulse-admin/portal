@@ -23,11 +23,11 @@
     }
 
     /** @ngInject */
-    function DocumentReviewController ($filter, $log, $scope, $window, commonService) {
+    function DocumentReviewController ($filter, $log, $scope, $window, utilService) {
         var vm = this;
 
         vm.cancel = cancel;
-        vm.displayName = commonService.displayName;
+        vm.displayName = utilService.displayName;
 
         activate();
 

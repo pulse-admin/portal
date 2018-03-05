@@ -23,12 +23,12 @@
         return directive;
 
         /** @ngInject */
-        function NamesController (commonService) {
+        function NamesController (utilService) {
             var vm = this;
 
             vm.addGiven = addGiven;
             vm.addName = addName;
-            vm.displayName = commonService.displayName;
+            vm.displayName = utilService.displayName;
             vm.removeGiven = removeGiven;
             vm.removeName = removeName;
 
@@ -38,9 +38,9 @@
 
             function activate () {
                 vm.defaultName = {givenName: [''], nameType: { code: 'L', description: 'Legal Name'} };
-                vm.nameTypes = commonService.getNameTypes();
-                vm.nameAssemblies = commonService.getNameAssemblies();
-                vm.nameRepresentations = commonService.getNameRepresentations();
+                vm.nameTypes = utilService.getNameTypes();
+                vm.nameAssemblies = utilService.getNameAssemblies();
+                vm.nameRepresentations = utilService.getNameRepresentations();
 
                 if (angular.isUndefined(vm.names)) {
                     vm.names = [angular.copy(vm.defaultName)];

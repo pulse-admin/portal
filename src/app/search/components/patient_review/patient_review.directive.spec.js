@@ -2,7 +2,7 @@
     'use strict';
 
     describe('search.aiPatientReview', function () {
-        var $compile, $log, $q, $rootScope, $timeout, $uibModal, Mock, actualOptions, commonService, el, mock, vm;
+        var $compile, $log, $q, $rootScope, $timeout, $uibModal, Mock, actualOptions, el, mock, networkService, utilService, vm;
 
         mock = {};
         mock.name = {
@@ -13,17 +13,17 @@
 
         beforeEach(function () {
             module('pulse.mock','portal', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
+                $provide.decorator('networkService', function ($delegate) {
                     $delegate.cancelQueryEndpoint = jasmine.createSpy('cancelQueryEndpoint');
                     $delegate.clearQuery = jasmine.createSpy('clearQuery');
                     $delegate.getQueries = jasmine.createSpy('getQueries');
                     $delegate.requeryEndpoint = jasmine.createSpy('requeryEndpoint');
-                    $delegate.searchForPatient = jasmine.createSpy('commonService.searchForPatient');
+                    $delegate.searchForPatient = jasmine.createSpy('networkService.searchForPatient');
                     $delegate.stagePatient = jasmine.createSpy('stagePatient');
                     return $delegate;
                 });
             });
-            inject(function (_$compile_, _$log_, _$q_, _$rootScope_, _$timeout_, _$uibModal_, _Mock_, _commonService_) {
+            inject(function (_$compile_, _$log_, _$q_, _$rootScope_, _$timeout_, _$uibModal_, _Mock_, _networkService_, _utilService_) {
                 // Get local versions
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
@@ -38,13 +38,14 @@
                     actualOptions = options;
                     return Mock.fakeModal;
                 });
-                commonService = _commonService_;
-                commonService.cancelQueryEndpoint.and.returnValue($q.when({}));
-                commonService.clearQuery.and.returnValue($q.when({}));
-                commonService.getQueries.and.returnValue($q.when(Mock.queries))
-                commonService.requeryEndpoint.and.returnValue($q.when(Mock.queries));
-                commonService.searchForPatient.and.returnValue($q.when({}));
-                commonService.stagePatient.and.returnValue($q.when({}));
+                networkService = _networkService_;
+                networkService.cancelQueryEndpoint.and.returnValue($q.when({}));
+                networkService.clearQuery.and.returnValue($q.when({}));
+                networkService.getQueries.and.returnValue($q.when(Mock.queries))
+                networkService.requeryEndpoint.and.returnValue($q.when(Mock.queries));
+                networkService.searchForPatient.and.returnValue($q.when({}));
+                networkService.stagePatient.and.returnValue($q.when({}));
+                utilService = _utilService_;
                 mock.fakeModalOptions = Mock.fakeModalOptions;
                 mock.fakeModalOptions.templateUrl = 'app/search/components/patient_stage/patient_stage.html';
                 mock.fakeModalOptions.controller = 'PatientStageController';
@@ -80,7 +81,7 @@
             });
 
             it('should get queries for a user at login', function () {
-                expect(commonService.getQueries).toHaveBeenCalled();
+                expect(networkService.getQueries).toHaveBeenCalled();
                 expect(vm.patientQueries.length).toBe(Mock.queries.length);
             });
 
@@ -104,18 +105,11 @@
                 expect(vm.countComplete(vm.patientQueries[1])).toBe(3);
             });
 
-            it('should call commonService to display names', function () {
-                spyOn(commonService, 'displayName');
-                expect(vm.displayName).toBeDefined();
-                vm.displayName(mock.name);
-                expect(commonService.displayName).toHaveBeenCalledWith(mock.name);
-            });
-
-            it('should call commonService to display names', function () {
-                spyOn(commonService, 'displayNames');
+            it('should call utilService to display names', function () {
+                spyOn(utilService, 'displayNames');
                 expect(vm.displayNames).toBeDefined();
                 vm.displayNames([mock.name]);
-                expect(commonService.displayNames).toHaveBeenCalledWith([mock.name],'<br />');
+                expect(utilService.displayNames).toHaveBeenCalledWith([mock.name],'<br />');
             });
 
             describe('refreshing', function () {
@@ -128,36 +122,36 @@
 
                 it('should not refresh if there is already a refresh pending', function () {
                     activeProducts[0].status = 'Complete';
-                    commonService.getQueries.and.returnValue($q.when(activeProducts));
+                    networkService.getQueries.and.returnValue($q.when(activeProducts));
                     vm.getQueries();
                     el.isolateScope().$digest();
-                    expect(commonService.getQueries.calls.count()).toBe(1);
+                    expect(networkService.getQueries.calls.count()).toBe(1);
                     vm.getQueries();
                     el.isolateScope().$digest();
-                    expect(commonService.getQueries.calls.count()).toBe(1);
+                    expect(networkService.getQueries.calls.count()).toBe(1);
                 });
 
                 it('should refresh the queries if there is one marked "Active"', function () {
-                    expect(commonService.getQueries.calls.count()).toBe(1);
+                    expect(networkService.getQueries.calls.count()).toBe(1);
                     $timeout.flush();
-                    expect(commonService.getQueries.calls.count()).toBe(2);
+                    expect(networkService.getQueries.calls.count()).toBe(2);
                     $timeout.flush();
-                    expect(commonService.getQueries.calls.count()).toBe(3);
+                    expect(networkService.getQueries.calls.count()).toBe(3);
 
                     activeProducts[0].status = 'Complete';
                     activeProducts[1].status = 'Complete';
-                    commonService.getQueries.and.returnValue($q.when(activeProducts));
+                    networkService.getQueries.and.returnValue($q.when(activeProducts));
                     $timeout.flush();
-                    expect(commonService.getQueries.calls.count()).toBe(4);
+                    expect(networkService.getQueries.calls.count()).toBe(4);
                     $timeout.flush();
-                    expect(commonService.getQueries.calls.count()).toBe(4);
+                    expect(networkService.getQueries.calls.count()).toBe(4);
                 });
 
                 it('should set "activeQuery" to true immediately upon starting a query', function () {
                     expect(vm.activeQuery).toBe(true);
                     activeProducts[0].status = 'Complete';
                     activeProducts[1].status = 'Complete';
-                    commonService.getQueries.and.returnValue($q.when(activeProducts));
+                    networkService.getQueries.and.returnValue($q.when(activeProducts));
                     $timeout.flush();
                     expect(vm.activeQuery).toBe(false);
                     vm.getQueries();
@@ -177,7 +171,7 @@
 
             it('should have a way to clear patient queries', function () {
                 expect(vm.patientQueries.length).toBe(Mock.queries.length);
-                commonService.getQueries.and.returnValue($q.when(angular.copy(Mock.queries).slice(1)));
+                networkService.getQueries.and.returnValue($q.when(angular.copy(Mock.queries).slice(1)));
 
                 vm.clearQuery(vm.patientQueries[0]);
                 el.isolateScope().$digest();
@@ -198,24 +192,24 @@
                 expect(vm.patientQueries.length).toBe(Mock.queries.length);
             });
 
-            it('should call commonService.clearQuery', function () {
+            it('should call networkService.clearQuery', function () {
                 var id = vm.patientQueries[0].id;
                 vm.clearQuery(vm.patientQueries[0]);
-                expect(commonService.clearQuery).toHaveBeenCalledWith(id);
+                expect(networkService.clearQuery).toHaveBeenCalledWith(id);
             });
 
             it('should have a way to cancel an endpoint\'s query', function () {
                 expect(vm.patientQueries[0].endpointStatuses.length).toBe(5);
-                commonService.getQueries.and.returnValue($q.when((angular.copy(Mock.queries)[0].endpointStatuses.splice(0,1))));
+                networkService.getQueries.and.returnValue($q.when((angular.copy(Mock.queries)[0].endpointStatuses.splice(0,1))));
 
                 vm.cancelQueryEndpoint(vm.patientQueries[0].endpointStatuses[0]);
                 el.isolateScope().$digest();
                 expect(vm.patientQueries[0].endpointStatuses.length).toBe(5);
             });
 
-            it('should call commonService.cancelEndpointQuery', function () {
+            it('should call networkService.cancelEndpointQuery', function () {
                 vm.cancelQueryEndpoint(vm.patientQueries[0].endpointStatuses[0]);
-                expect(commonService.cancelQueryEndpoint).toHaveBeenCalledWith(vm.patientQueries[0].id, vm.patientQueries[0].endpointStatuses[0].endpoint.id);
+                expect(networkService.cancelQueryEndpoint).toHaveBeenCalledWith(vm.patientQueries[0].id, vm.patientQueries[0].endpointStatuses[0].endpoint.id);
             });
 
             it('should set the endpoint status to "pending" when clearing', function () {
@@ -280,9 +274,9 @@
                 expect(vm.requeryEndpoint).toBeDefined();
             });
 
-            it('should call commonService.requeryEndpoint when requeried', function () {
+            it('should call networkService.requeryEndpoint when requeried', function () {
                 vm.requeryEndpoint(Mock.queries[0].endpointStatuses[0]);
-                expect(commonService.requeryEndpoint).toHaveBeenCalledWith(1,7);
+                expect(networkService.requeryEndpoint).toHaveBeenCalledWith(1,7);
             });
 
             it('should refresh local queries when requeried', function () {

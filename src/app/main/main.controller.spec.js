@@ -1,117 +1,64 @@
 (function () {
     'use strict';
 
-    describe('main.controller', function () {
-        var $log, $q, $timeout, $window, commonService, ctrl, location, mock, scope, vm;
+    describe('the entry point', function () {
+        var $location, $log, authService, ctrl, mock, scope;
         mock = {
             token: 'a token here',
         };
 
         beforeEach(function () {
             module('portal.main', 'portal.constants', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
-                    $delegate.isAuthenticated = jasmine.createSpy('isAuthenticated');
-                    $delegate.hasAcf = jasmine.createSpy('hasAcf');
-                    $delegate.getSamlUserToken = jasmine.createSpy('getSamlUserToken');
+                $provide.decorator('authService', function ($delegate) {
                     $delegate.getToken = jasmine.createSpy('getToken');
+                    $delegate.hasAcf = jasmine.createSpy('hasAcf');
                     return $delegate;
                 });
             });
 
-            inject(function ($controller, _$location_, _$log_, _$q_, $rootScope, _$timeout_, _$window_, _commonService_) {
+            inject(function ($controller, _$location_, _$log_, $rootScope, _authService_) {
+                $location = _$location_;
                 $log = _$log_;
                 ctrl = $controller;
-                $timeout = _$timeout_;
-                location = _$location_;
-                $window = _$window_;
-                $q = _$q_;
-                commonService = _commonService_;
-                commonService.isAuthenticated.and.returnValue(true);
-                commonService.hasAcf.and.returnValue(false);
-                commonService.getSamlUserToken.and.returnValue($q.when(mock.token));
-                commonService.getToken.and.returnValue(mock.token);
+                authService = _authService_;
+                authService.getToken.and.returnValue(mock.token);
+                authService.hasAcf.and.returnValue(false);
 
-                spyOn($window.location, 'replace');
+                spyOn($location, 'path');
 
                 scope = $rootScope.$new();
-                vm = $controller('MainController');
+                $controller('MainController');
                 scope.$digest();
             });
         });
 
         afterEach(function () {
             if ($log.debug.logs.length > 0) {
-                //console.debug("\n Debug: " + $log.debug.logs.join("\n Debug: "));
+                /* eslint-disable no-console,angular/log */
+                console.log('Debug:\n' + $log.debug.logs.map(function (o) { return angular.toJson(o); }).join('\n'));
+                /* eslint-enable no-console,angular/log */
             }
         });
 
-        it('should know if the user is authenticated', function () {
-            expect(vm.isAuthenticated).toBeDefined();
-            expect(vm.isAuthenticated()).toBeTruthy();
-        });
-
-        it('should know if the user has an ACF', function () {
-            expect(vm.hasAcf).toBeDefined();
-            commonService.hasAcf.and.returnValue(true);
-            scope.$digest();
-            expect(vm.hasAcf()).toBeTruthy();
-        });
-
-        it('should call for a SAML based user token', function () {
-            expect(commonService.getSamlUserToken).toHaveBeenCalled();
-        });
-
-        it('should call for the PULSE token if the SAML request returns a token', function () {
-            expect(commonService.getToken).toHaveBeenCalledWith(true);
+        it('should call for the PULSE token on load', function () {
+            expect(authService.getToken).toHaveBeenCalledWith(true);
         });
 
         it('should redirect the user to search if they have an acf', function () {
-            commonService.hasAcf.and.returnValue(true);
-            vm = ctrl('MainController');
-            spyOn(location, 'path');
+            var initCount = $location.path.calls.count();
+            authService.hasAcf.and.returnValue(true);
+            ctrl('MainController');
             scope.$digest();
-            expect(location.path).toHaveBeenCalledWith('/search');
+            expect($location.path.calls.count()).toBe(initCount + 1);
+            expect($location.path).toHaveBeenCalledWith('/search');
         });
 
         it('should not redirect the user to search if they do not have an acf', function () {
-            vm = ctrl('MainController');
-            spyOn(location, 'path');
+            var initCount = $location.path.calls.count();
+            ctrl('MainController');
             scope.$digest();
-            expect(location.path).not.toHaveBeenCalledWith('/search');
-        });
-
-        it('should be ready to redirect the user to DHV if they don\'t have a SAML based token', function () {
-            expect(vm.willRedirect).toBe(false);
-            commonService.getSamlUserToken.and.returnValue($q.reject('no token'));
-            vm = ctrl('MainController');
-            scope.$digest();
-            expect(vm.willRedirect).toBe(true);
-        });
-
-        it('should be ready to redirect the user to DHV if they have an undefined SAML based token', function () {
-            expect(vm.willRedirect).toBe(false);
-            commonService.getSamlUserToken.and.returnValue($q.when(undefined));
-            vm = ctrl('MainController');
-            scope.$digest();
-            expect(vm.willRedirect).toBe(true);
-        });
-
-        it('should submit the form if it redirect', function () {
-            var submitSpy = jasmine.createSpy('submit');
-            spyOn(document,'getElementById').and.returnValue({submit: submitSpy});
-            vm.willRedirect = true;
-            vm.redirectToDhv();
-            $timeout.flush();
-            expect(submitSpy).toHaveBeenCalled();
-        });
-
-        it('should not submit the form if it shouldn\'t redirect', function () {
-            var submitSpy = jasmine.createSpy('submit');
-            spyOn(document,'getElementById').and.returnValue({submit: submitSpy});
-            vm.willRedirect = false;
-            vm.redirectToDhv();
-            $timeout.flush();
-            expect(submitSpy).not.toHaveBeenCalled();
+            expect($location.path.calls.count()).toBe(initCount);
+            expect($location.path).not.toHaveBeenCalledWith('/search');
         });
     });
 })();
