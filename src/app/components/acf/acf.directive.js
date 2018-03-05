@@ -40,7 +40,7 @@
                     if (!vm.selectAcf()) {
                         vm.createAcf();
                     }
-                 //$location.path('/search');
+                    $location.path('/search');
                 }
                 if (vm.mode === 'view') {
                     vm.acf = authService.getUserAcf();

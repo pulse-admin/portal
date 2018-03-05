@@ -11,14 +11,11 @@
         mock.user = {
             user_id: 'user_id',
             username: 'username',
-            auth_source: 'auth_source',
             full_name: 'full_name',
-            organization: 'organization',
-            purpose_for_use: 'purpose_for_use',
-            role: 'role',
-            pulseUserId: '1',
+            //pulseUserId: '1',
             acf: mock.userAcf,
             authorities: ['ROLE_ADMIN'],
+            orgs: {},
         };
         mock.acfs = [{id: 1, name: 'ACF 1', address: {}}, {id: 2, name: 'ACF 2', address: {}}];
         var tokenPrefix = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.';
@@ -210,8 +207,9 @@
                 sub: user.username,
                 iat: iatDate.getTime(),
                 exp: expDate.getTime(),
-                Identity: [user.user_id, user.username, user.auth_source, user.full_name, user.organization, user.purpose_for_use, user.role, user.pulseUserId, options.acf],
+                Identity: [user.user_id, user.username, user.full_name],
                 Authorities: user.authorities,
+                Orgs: {},
             };
             var ret;
             if (options && options.acf) {
