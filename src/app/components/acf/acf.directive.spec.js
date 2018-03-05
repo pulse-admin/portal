@@ -49,7 +49,10 @@
                 });
                 authService = _authService_;
                 authService.getUserAcf.and.returnValue(Mock.acfs[0]);
-                authService.getUserIdentity.and.returnValue({organization: 'self'});
+                authService.getUserIdentity.and.returnValue({orgs: {
+                    'pulse-tx': 3,
+                    'acf-2': 1,
+                }});
                 authService.hasAcf.and.returnValue(true);
                 authService.hasRole.and.returnValue(true);
                 networkService = _networkService_;
@@ -126,13 +129,17 @@
 
                 it('should create an ACF if one doesn\'t exist', function () {
                     expect(networkService.createAcf).toHaveBeenCalledWith({
-                        identifier: 'self',
-                        name: 'self',
+                        liferayAcfId: 1,
+                        liferayStateId: 3,
+                        identifier: 'acf-2',
+                        name: 'acf-2',
                     });
                 });
 
                 it('should set the user to an ACF if it matches', function () {
-                    authService.getUserIdentity.and.returnValue({organization: 'Alameda-01'});
+                    authService.getUserIdentity.and.returnValue({orgs: {
+                        'Alameda-01': 3,
+                    }});
                     vm.selectAcf();
                     expect(networkService.setAcf).toHaveBeenCalledWith(Mock.acfs[1]);
                 });
