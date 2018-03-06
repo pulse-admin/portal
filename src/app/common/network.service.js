@@ -6,7 +6,7 @@
         .factory('networkService', networkService);
 
     /** @ngInject */
-    function networkService ($http, $localStorage, $log, $q, $window, API, AuthAPI, GAAPI) {
+    function networkService ($http, $localStorage, $log, $q, $window, API, AuthAPI) {
         var service = {
             cacheDocument: cacheDocument,
             cancelDocument: cancelDocument,
@@ -20,7 +20,6 @@
             editPatient: editPatient,
             getAcf: getAcf,
             getAcfs: getAcfs,
-            getAnalytics: getAnalytics,
             getDocument: getDocument,
             getEndpointStatistics: getEndpointStatistics,
             getQueries: getQueries,
@@ -90,15 +89,6 @@
 
         function getAcfs () {
             return enhancedGet('/acfs');
-        }
-
-        function getAnalytics (id) {
-            return $http.get(GAAPI + '/query?id=' + id + '&format=data-table')
-                .then(function (response) {
-                    return response.data;
-                }, function (response) {
-                    return $q.reject(response);
-                });
         }
 
         function getDocument (patientId, documentId) {

@@ -40,7 +40,7 @@
                     if (!vm.selectAcf()) {
                         vm.createAcf();
                     }
-                    $location.path('/search');
+                    //$location.path('/search');
                 }
                 if (vm.mode === 'view') {
                     vm.acf = authService.getUserAcf();
@@ -86,7 +86,7 @@
             function selectAcf (inputAcf) {
                 if (inputAcf) {
                     networkService.setAcf(inputAcf).then(function () {
-                        $location.path('/search');
+                        //$location.path('/search');
                     });
                 } else {
                     var org = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];

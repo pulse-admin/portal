@@ -144,11 +144,11 @@
                     expect(networkService.setAcf).toHaveBeenCalledWith(Mock.acfs[1]);
                 });
 
-                it('should redirect the user to search', function () {
+                xit('should redirect the user to search', function () {
                     expect($location.path).toHaveBeenCalledWith('/search');
                 });
 
-                it('should redirect the user to search if an ACF is passed in', function () {
+                xit('should redirect the user to search if an ACF is passed in', function () {
                     vm.selectAcf(Mock.acfs[1]);
                     expect(networkService.setAcf).toHaveBeenCalledWith(Mock.acfs[1]);
                     expect($location.path).toHaveBeenCalledWith('/search');

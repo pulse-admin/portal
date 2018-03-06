@@ -21,7 +21,6 @@
             <li ng-if="vm.hasAcf()" role="separator" class="divider"></li>
             <li ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/search">Search</a></li>
             <li ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/review">Review</a></li>
-            <li><a href="#/status">Location Status</a></li>
             <li>
               <button class="btn btn-primary btn-block" id="logoutButton" ng-click="vm.logout()">Log Out</button>
             </li>

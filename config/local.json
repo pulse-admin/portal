@@ -1,13 +1,10 @@
 {
     'API': '/rest',
     'AuthAPI':  '/auth',
-    'GAAPI': 'https://pulse-160916.appspot.com',
     'IdleTimeout': 20,
     'IdleWarn': 1,
-    'IDP': 'https://california.demo.collaborativefusion.com/sso/saml2/idp/',
     'KeepaliveInterval': 1,
     'LocationQueryInterval': 60,
     'QueryQueryTimeout': 5,
-    'SwaggerUrl': '/rest/api-docs',
-    'acfWritesAllowed': true
+    'SwaggerUrl': '/rest/api-docs'
 }
