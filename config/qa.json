@@ -1,13 +1,10 @@
 {
-    'API': 'https://www.pulsedemo.org/rest',
-    'AuthAPI':  'https://www.pulsedemo.org/auth',
-    'GAAPI': 'https://pulse-160916.appspot.com',
+    'API': 'https://qa.pulse-us.org/rest',
+    'AuthAPI':  'https://qa.pulse-us.org/auth',
     'IdleTimeout': 20,
     'IdleWarn': 1,
-    'IDP': 'https://california.demo.collaborativefusion.com/sso/saml2/idp/',
     'KeepaliveInterval': 1,
     'LocationQueryInterval': 60,
     'QueryQueryTimeout': 5,
-    'SwaggerUrl': 'https://www.pulsedemo.org/rest/api-docs',
-    'acfWritesAllowed': true
+    'SwaggerUrl': 'https://qa.pulse-us.org/rest/api-docs'
 }

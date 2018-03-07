@@ -3,7 +3,7 @@
 
     describe('the Network services', function () {
 
-        var $httpBackend, $log, $window, API, AuthAPI, GAAPI, mock, networkService, requestHandler;
+        var $httpBackend, $log, $window, API, AuthAPI, mock, networkService, requestHandler;
 
         requestHandler = {};
         mock = {};
@@ -14,14 +14,13 @@
 
         beforeEach(module('portal.common', 'portal.constants'));
 
-        beforeEach(inject(function (_$httpBackend_, $localStorage, _$log_, _$window_, _API_, _AuthAPI_, _GAAPI_, _networkService_) {
+        beforeEach(inject(function (_$httpBackend_, $localStorage, _$log_, _$window_, _API_, _AuthAPI_, _networkService_) {
             networkService = _networkService_;
             $httpBackend = _$httpBackend_;
             $log = _$log_;
             $window = _$window_;
             API = _API_;
             AuthAPI = _AuthAPI_;
-            GAAPI = _GAAPI_;
 
             spyOn($window.location, 'replace');
             requestHandler.cacheDocument = $httpBackend.whenGET(API + '/patients/3/documents/2').respond(200, true);
@@ -304,30 +303,6 @@
                     expect(response).toEqual('a rejection');
                 });
                 $httpBackend.flush();
-            });
-
-            describe('when dealing with analytics', function () {
-                it('should call /analytic endpoints', function () {
-                    $httpBackend.expectGET(GAAPI + '/query?id=4&format=data-table').respond(200, {});
-                    networkService.getAnalytics(4);
-                    $httpBackend.flush();
-                });
-
-                it('should return the data endpoints', function () {
-                    $httpBackend.expectGET(GAAPI + '/query?id=4&format=data-table').respond(200, {data: 'data'});
-                    networkService.getAnalytics(4).then(function (response) {
-                        expect(response).toEqual({data: 'data'});
-                    });
-                    $httpBackend.flush();
-                });
-
-                it('should reject a call that doesn\'t return an object', function () {
-                    $httpBackend.expectGET(GAAPI + '/query?id=4&format=data-table').respond(401, {error: 'a rejection'});
-                    networkService.getAnalytics(4).then(function (response) {
-                        expect(response).toEqual('a rejection');
-                    });
-                    $httpBackend.flush();
-                });
             });
         });
     });
