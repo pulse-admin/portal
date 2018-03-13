@@ -35,16 +35,17 @@
             ////////////////////////////////////////////////////////////////////
 
             function activate () {
-                vm.getAcfs();
-                if (vm.mode === 'select' && !vm.hasRole(['ROLE_ADMIN'])) {
-                    if (!vm.selectAcf()) {
-                        vm.createAcf();
+                vm.getAcfs().then(function () {
+                    if (vm.mode === 'select' && !vm.hasRole(['ROLE_ADMIN'])) {
+                        if (!vm.selectAcf()) {
+                            vm.createAcf();
+                        }
+                        $location.path('/search');
                     }
-                    //$location.path('/search');
-                }
-                if (vm.mode === 'view') {
-                    vm.acf = authService.getUserAcf();
-                }
+                    if (vm.mode === 'view') {
+                        vm.acf = authService.getUserAcf();
+                    }
+                });
             }
 
             function createAcf () {
@@ -78,7 +79,7 @@
 
             function getAcfs () {
                 vm.acfs = [];
-                networkService.getAcfs().then(function (response) {
+                return networkService.getAcfs().then(function (response) {
                     vm.acfs = vm.acfs.concat(response);
                 });
             }
@@ -86,7 +87,7 @@
             function selectAcf (inputAcf) {
                 if (inputAcf) {
                     networkService.setAcf(inputAcf).then(function () {
-                        //$location.path('/search');
+                        $location.path('/search');
                     });
                 } else {
                     var org = Object.keys(authService.getUserIdentity().orgs).filter(function (org) { return org.substring(0,6) !== 'pulse-'; })[0];
