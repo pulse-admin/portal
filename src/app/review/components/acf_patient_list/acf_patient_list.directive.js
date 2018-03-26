@@ -44,6 +44,7 @@
             vm.displayName = utilService.displayName;
             vm.editPatient = editPatient;
             vm.getDocument = getDocument;
+            vm.getPatientId = getPatientId;
             vm.getPatientsAtAcf = getPatientsAtAcf;
             vm.getUserAcf = getUserAcf;
             vm.requeryDocument = requeryDocument;
@@ -148,6 +149,10 @@
                 networkService.getDocument(patient.id, doc.id).then(function (response) {
                     vm.activeDocument = response;
                 });
+            }
+
+            function getPatientId (patient) {
+                return 'patient-id-' + patient.fullName.replace(/\s/g, '_');
             }
 
             function getPatientsAtAcf () {
