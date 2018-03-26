@@ -443,6 +443,10 @@
             expect(vm.deactivatePatient).toHaveBeenCalled();
         });
 
+        it('should have an ID for each patient', function () {
+            expect(vm.getPatientId(vm.patients[0])).toBe('patient-id-Jane_Doe');
+        });
+
         describe('refreshing', function () {
             beforeEach(function () {
                 vm.patients[1].endpointMaps[2].documentsQueryStatus = 'Successful';
