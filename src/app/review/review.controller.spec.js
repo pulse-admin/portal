@@ -2,23 +2,23 @@
     'use strict';
 
     describe('review.controller', function () {
-        var $log, commonService, ctrl, location, scope, vm;
+        var $log, authService, ctrl, location, scope, vm;
 
         beforeEach(function () {
             module('portal.review', 'portal.constants', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
+                $provide.decorator('authService', function ($delegate) {
                     $delegate.isAuthenticated = jasmine.createSpy('isAuthenticated');
                     $delegate.hasAcf = jasmine.createSpy('hasAcf');
                     return $delegate;
                 });
             });
 
-            inject(function ($controller, _$location_, _$log_, $q, $rootScope, _commonService_) {
-                commonService = _commonService_;
+            inject(function ($controller, _$location_, _$log_, $q, $rootScope, _authService_) {
+                authService = _authService_;
                 $log = _$log_;
                 location = _$location_;
-                commonService.isAuthenticated.and.returnValue(true);
-                commonService.hasAcf.and.returnValue(true);
+                authService.isAuthenticated.and.returnValue(true);
+                authService.hasAcf.and.returnValue(true);
 
                 ctrl = $controller;
                 scope = $rootScope.$new();
@@ -44,7 +44,7 @@
         });
 
         it('should redirect the user to home if they\'re not authenticated', function () {
-            commonService.isAuthenticated.and.returnValue(false);
+            authService.isAuthenticated.and.returnValue(false);
             spyOn(location, 'path');
             vm = ctrl('ReviewController');
             scope.$digest();
@@ -53,7 +53,7 @@
         });
 
         it('should redirect the user to home if they don\'t have an acf', function () {
-            commonService.hasAcf.and.returnValue(false);
+            authService.hasAcf.and.returnValue(false);
             spyOn(location, 'path');
             vm = ctrl('ReviewController');
             scope.$digest();

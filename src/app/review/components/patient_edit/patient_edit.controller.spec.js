@@ -2,7 +2,7 @@
     'use strict';
 
     describe('review.aiPatientEdit', function () {
-        var $log, $q, $uibModal, commonService, mock, scope, vm;
+        var $log, $q, $uibModal, mock, networkService, scope, vm;
 
         mock = {
             badRequest: {
@@ -38,18 +38,18 @@
 
         beforeEach(function () {
             module('portal', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
+                $provide.decorator('networkService', function ($delegate) {
                     $delegate.editPatient = jasmine.createSpy('editPatient');
                     return $delegate;
                 });
             });
-            inject(function ($controller, _$log_, _$q_, $rootScope, _$uibModal_, _commonService_) {
+            inject(function ($controller, _$log_, _$q_, $rootScope, _$uibModal_, _networkService_) {
                 $log = _$log_;
                 $uibModal = _$uibModal_;
                 spyOn($uibModal, 'open').and.returnValue(mock.fakeModal);
                 $q = _$q_;
-                commonService = _commonService_;
-                commonService.editPatient.and.returnValue($q.when({}));
+                networkService = _networkService_;
+                networkService.editPatient.and.returnValue($q.when({}));
 
                 scope = $rootScope.$new();
                 vm = $controller('PatientEditController', {
@@ -85,7 +85,7 @@
             });
 
             it('should have an error message if the saving doesn\'t go well', function () {
-                commonService.editPatient.and.returnValue($q.reject({data: {error: 'error'}}));
+                networkService.editPatient.and.returnValue($q.reject({data: {error: 'error'}}));
                 vm.editPatient();
                 scope.$digest();
                 expect(vm.errorMessage).toEqual('error');

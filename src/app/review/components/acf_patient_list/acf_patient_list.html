@@ -12,7 +12,7 @@
         <div class="col-sm-12">No active patients currently at <strong>{{ vm.userAcf.identifier }}</strong></div>
       </div>
       <div class="row" ng-if="vm.activePatient === null">
-        <div class="col-sm-4" ng-repeat="patient in vm.patients | orderBy : 'lastRead' : 'reverse' track by patient.id">
+        <div class="col-sm-4" ng-repeat="patient in vm.patients | orderBy : 'lastRead' : 'reverse' track by patient.id" id="vm.getPatientId(patient)">
           <h3>{{ patient.fullName }}
             <div class="btn-group btn-group-sm pull-right">
               <button class="btn btn-success" ng-click="vm.activatePatient(patient)"><i class="fa fa-search"></i><span class="sr-only">Activate {{ patient.fullName }}</span></button>

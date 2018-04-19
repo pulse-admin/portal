@@ -10,7 +10,7 @@
       <a class="btn btn-lg btn-block btn-success btn-active-nav" href="#/review">Review</a>
     </div>
   </div>
-  <div class="row">
+  <div class="row" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])">
     <div class="col-sm-12">
       <ai-acf-patient-list
          register-handler="vm.registerHandler(handler)"
@@ -18,11 +18,16 @@
       </ai-acf-patient-list>
     </div>
   </div>
-  <div class="row">
+  <div class="row" ng-if="vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])">
     <div class="col-sm-12">
       <ai-document-review
          active-document="vm.activeDocument">
       </ai-document-review>
+    </div>
+  </div>
+  <div class="row" ng-if="!vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])">
+    <div class="col-sm-12">
+      You do not have permission to review patients
     </div>
   </div>
   <footer>

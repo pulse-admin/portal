@@ -2,7 +2,7 @@
     'use strict';
 
     describe('search.aiPatientSearch', function () {
-        var $compile, $log, $q, $rootScope, Mock, commonService, el, mock, vm;
+        var $compile, $log, $q, $rootScope, Mock, el, mock, networkService, vm;
 
         mock = {patientSearch: {results: [{id: 2, givenName: 'Joe', familyName: 'Rogan'}, {id: 3, givenName: 'Sue', familyName: 'Samson'}]}};
         mock.badRequest = {
@@ -31,19 +31,19 @@
 
         beforeEach(function () {
             module('pulse.mock', 'portal', function ($provide) {
-                $provide.decorator('commonService', function ($delegate) {
-                    $delegate.searchForPatient = jasmine.createSpy('commonService.searchForPatient');
+                $provide.decorator('networkService', function ($delegate) {
+                    $delegate.searchForPatient = jasmine.createSpy('networkService.searchForPatient');
                     return $delegate;
                 });
             });
-            inject(function (_$compile_, _$log_, _$q_, _$rootScope_, _Mock_, _commonService_) {
+            inject(function (_$compile_, _$log_, _$q_, _$rootScope_, _Mock_, _networkService_) {
                 $compile = _$compile_;
                 $rootScope = _$rootScope_;
                 $log = _$log_;
                 $q = _$q_;
                 Mock = _Mock_;
-                commonService = _commonService_;
-                commonService.searchForPatient.and.returnValue($q.when(mock.patientSearch));
+                networkService = _networkService_;
+                networkService.searchForPatient.and.returnValue($q.when(mock.patientSearch));
 
                 el = angular.element('<ai-patient-search></ai-patient-search>');
 
@@ -105,9 +105,9 @@
                 vm.queryForm.$setDirty();
             });
 
-            it('should call commonService.searchForPatient on query', function () {
+            it('should call networkService.searchForPatient on query', function () {
                 vm.searchForPatient();
-                expect(commonService.searchForPatient).toHaveBeenCalled();
+                expect(networkService.searchForPatient).toHaveBeenCalled();
             });
 
             it('should clear the query fields on a search', function () {
@@ -146,11 +146,11 @@
                 var compiled = angular.copy(vm.query);
                 compiled.dob = '19990319'
                 vm.searchForPatient();
-                expect(commonService.searchForPatient).toHaveBeenCalledWith(compiled);
+                expect(networkService.searchForPatient).toHaveBeenCalledWith(compiled);
             });
 
             it('should show an error if the search is bad', function () {
-                commonService.searchForPatient.and.returnValue($q.reject({data: mock.badRequest}));
+                networkService.searchForPatient.and.returnValue($q.reject({data: mock.badRequest}));
                 vm.searchForPatient();
                 el.isolateScope().$digest();
                 expect(vm.errorMessage).toBe(mock.badRequest.message);
@@ -194,11 +194,11 @@
         it('should only search if the form is valid', function () {
             vm.queryForm.$invalid = true;
             vm.searchForPatient();
-            expect(commonService.searchForPatient).not.toHaveBeenCalled();
+            expect(networkService.searchForPatient).not.toHaveBeenCalled();
 
             vm.queryForm.$invalid = false;
             vm.searchForPatient();
-            expect(commonService.searchForPatient).toHaveBeenCalled();
+            expect(networkService.searchForPatient).toHaveBeenCalled();
         });
     });
 })();

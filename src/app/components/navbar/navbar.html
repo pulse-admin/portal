@@ -15,15 +15,15 @@
     <div class="collapse navbar-collapse" uib-collapse="vm.navCollapsed" aria-labeledby="menu-toggle">
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown" uib-dropdown auto-close="disabled" is-open="vm.navOpen">
-          <a href class="dropdown-toggle" id="login-toggle" uib-dropdown-toggle aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> {{ vm.getUserName() }} <span class="fa" ng-class="vm.navOpen ? 'fa-caret-down' : 'fa-caret-right'"></span></a>
+          <span ng-if="!vm.hasAcf()"><i class="fa fa-user"></i> {{ vm.getUserName() }}</span>
+          <a ng-if="vm.hasAcf()" href class="dropdown-toggle" id="login-toggle" uib-dropdown-toggle aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> {{ vm.getUserName() }} <span class="fa" ng-class="vm.navOpen ? 'fa-caret-down' : 'fa-caret-right'"></span></a>
           <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="login-toggle">
             <li ng-if="vm.hasAcf()"><ai-acf mode="view"></ai-acf>
             <li ng-if="vm.hasAcf()" role="separator" class="divider"></li>
-            <li><a href="#/search">Search</a></li>
-            <li><a href="#/review">Review</a></li>
-            <li><a href="#/status">Location Status</a></li>
+            <li ng-if="vm.hasAcf() && vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/search">Search</a></li>
+            <li ng-if="vm.hasAcf() && vm.hasRole(['ROLE_ADMIN','ROLE_PROVIDER'])"><a href="#/review">Review</a></li>
             <li>
-              <button class="btn btn-primary btn-block" id="logoutButton" ng-click="vm.logout()">Log Out</button>
+              <button ng-if="vm.hasAcf() && vm.hasRole(['ROLE_ADMIN'])" class="btn btn-primary btn-block" id="logoutButton" ng-click="vm.logout()">Exit ACF</button>
             </li>
           </ul>
         </li>

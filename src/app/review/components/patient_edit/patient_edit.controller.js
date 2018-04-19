@@ -6,7 +6,7 @@
         .controller('PatientEditController', PatientEditController);
 
     /** @ngInject */
-    function PatientEditController ($filter, $log, $uibModalInstance, commonService, patient) {
+    function PatientEditController ($filter, $log, $uibModalInstance, networkService, patient) {
         var vm = this;
 
         vm.cancel = cancel;
@@ -31,7 +31,7 @@
 
         function editPatient () {
             vm.patient.dateOfBirth = vm.patient.dateOfBirthParts.year + vm.patient.dateOfBirthParts.month + vm.patient.dateOfBirthParts.day;
-            commonService.editPatient(vm.patient).then(function () {
+            networkService.editPatient(vm.patient).then(function () {
                 $uibModalInstance.close(vm.patient)
             }, function (error) {
                 vm.errorMessage = error.data.error;

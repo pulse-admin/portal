@@ -6,12 +6,12 @@
         .controller('PatientStageController', PatientStageController);
 
     /** @ngInject */
-    function PatientStageController ($filter, $log, $uibModal, $uibModalInstance, commonService, query) {
+    function PatientStageController ($filter, $log, $uibModal, $uibModalInstance, networkService, query, utilService) {
         var vm = this;
 
         vm.cancel = cancel;
         vm.clearQuery = clearQuery;
-        vm.convertDobString = commonService.convertDobString;
+        vm.convertDobString = utilService.convertDobString;
         vm.displayNames = displayNames;
         vm.friendlyFullName = friendlyFullName;
         vm.isStageable = isStageable;
@@ -35,17 +35,17 @@
         }
 
         function clearQuery () {
-            commonService.clearQuery(vm.query.id).then(function () {
+            networkService.clearQuery(vm.query.id).then(function () {
                 $uibModalInstance.dismiss('query cleared');
             });
         }
 
         function displayNames (names) {
-            return commonService.displayNames(names, '<br />');
+            return utilService.displayNames(names, '<br />');
         }
 
         function friendlyFullName (name) {
-            return commonService.friendlyFullName(name);
+            return utilService.friendlyFullName(name);
         }
 
         function isStageable () {
@@ -69,7 +69,7 @@
                     month: vm.query.terms.dob.substring(4,6),
                     day: vm.query.terms.dob.substring(6,8),
                 },
-                dateOfBirthString: commonService.convertDobString(vm.query.terms.dob),
+                dateOfBirthString: vm.convertDobString(vm.query.terms.dob),
                 fullName: vm.friendlyFullName(vm.query.terms.patientNames[0]),
                 gender: vm.query.terms.gender,
                 ssn: vm.query.terms.ssn,
@@ -97,7 +97,7 @@
                         }
                     }
                 }
-                commonService.stagePatient(newPatient).then(function () {
+                networkService.stagePatient(newPatient).then(function () {
                     $uibModalInstance.close()
                 }, function (error) {
                     vm.errorMessage = error.data.error;

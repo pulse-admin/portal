@@ -33,7 +33,6 @@
             'portal.resources',
             'portal.review',
             'portal.search',
-            'portal.status',
         ]);
 
 })();

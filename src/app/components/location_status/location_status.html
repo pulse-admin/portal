@@ -1,8 +1,0 @@
-<div class="location-status">
-  <div class="row">
-    <div class="col-sm-6" ng-repeat="location in vm.locationStatistics | orderBy:'location.name' track by $index">
-      <div ng-if="location.statistics" google-chart chart="location.statistics"></div>
-      <div ng-if="!location.statistics"><strong>{{ location.location.name }}</strong>: No status at this time</div>
-    </div>
-  </div>
-</div>
